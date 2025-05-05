@@ -13,25 +13,28 @@ set -o errexit
 set -o pipefail
 
 #------------------------------------------------------------------------------
-# Pull in external code from a "functions" subfolder
+# Pull in external code from the current folder
 #------------------------------------------------------------------------------
 
 # The shellcheck tool cannot follow a non-constant source so need to ignore for each inclusion
 cwd=$(cd "$(dirname "${0}")" && pwd)
 # shellcheck source=/dev/null
-source "${cwd}/functions/colours.bash"
+source "${cwd}/coloured-text.bash"
 
 #------------------------------------------------------------------------------
-# Usage
+# Usage. This code uses functions from "coloured-text.bash".
 #------------------------------------------------------------------------------
 
 function fn_usage() {
   echo
   echo "This script does something useful."
   echo
-  print_warning "Usage: $0 [-ahqv]"
+  fn_print_warning "Usage: $0 [-ahqv]"
   echo
-  print_tabbed_message "-h   Show this usage message and exit"
+  fn_print_tabbed_message "-a  VALUE  Argument taking a value [${DEFAULT_ARGUMENT}]"
+  fn_print_tabbed_message "-h         Show this usage message and exit"
+  fn_print_tabbed_message "-q         Quiet mode"
+  fn_print_tabbed_message "-v         Verbose mode"
   echo
 }
 
@@ -41,6 +44,7 @@ function fn_usage() {
 
 DEFAULT_ARGUMENT="hello"
 
+argument="${DEFAULT_ARGUMENT}"
 quiet_mode=false
 verbose_mode=false
 while getopts "a:hqv" opt; do
@@ -63,3 +67,6 @@ while getopts "a:hqv" opt; do
     ;;
   esac
 done
+
+# Arbitrary usage of args to avoid shellcheck warnings against the template
+echo "${argument}" "${quiet_mode}" "${verbose_mode}" >/dev/null
