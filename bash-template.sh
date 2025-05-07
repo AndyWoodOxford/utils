@@ -42,6 +42,9 @@ function fn_usage() {
   fn_print_tabbed_message "-q             Quiet mode"
   fn_print_tabbed_message "-v             Verbose mode"
   echo
+  echo -e "The ${BWHITE}MANDATORY${COLOUR_OFF} value must be one of the following:"
+  fn_print_tabbed_message "${ALLOWED_MANDATORY_VALUES[*]}"
+  echo
   echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
   echo
 }
@@ -78,6 +81,8 @@ function fn_fail_if_missing() {
 #------------------------------------------------------------------------------
 
 DEFAULT_ARGUMENT="hello"
+
+ALLOWED_MANDATORY_VALUES=("foo" "bar")
 
 optional_arg="${DEFAULT_ARGUMENT}"
 mandatory_arg=
@@ -116,6 +121,15 @@ fi
 
 # Assert that the mandatory argument is defined (using a function)
 fn_fail_if_missing "${BRED}mandatory_arg${COLOUR_OFF} is not defined" "${mandatory_arg:-}"
+
+# Assert that the mandatory argument has an allowed value
+  if [[ ! "${ALLOWED_MANDATORY_VALUES[*]}" =~ ${mandatory_arg} ]]
+  then
+    fn_print_error "ERROR: \"${mandatory_arg}\" is not an allowed value."
+    fn_usage
+    exit 1
+  fi
+
 
 # Check for mutually exclusive options
 if [[ "${quiet_mode}" = true ]] && [[ "${verbose_mode}" = true ]]
