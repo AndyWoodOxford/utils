@@ -42,6 +42,8 @@ function fn_usage() {
   fn_print_tabbed_message "-q             Quiet mode"
   fn_print_tabbed_message "-v             Verbose mode"
   echo
+  echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
+  echo
 }
 
 #------------------------------------------------------------------------------
@@ -114,6 +116,13 @@ fi
 
 # Assert that the mandatory argument is defined (using a function)
 fn_fail_if_missing "${BRED}mandatory_arg${COLOUR_OFF} is not defined" "${mandatory_arg:-}"
+
+# Check for mutually exclusive options
+if [[ "${quiet_mode}" = true ]] && [[ "${verbose_mode}" = true ]]
+then
+  fn_print_error "ERROR: the '-q' and '-v' options are mutually exclusive"
+  exit 1
+fi
 
 # Arbitrary usage of args to avoid shellcheck warnings against the template
 echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
