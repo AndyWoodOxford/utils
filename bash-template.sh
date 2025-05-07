@@ -58,6 +58,20 @@ function fn_aborted() {
 }
 
 #------------------------------------------------------------------------------
+# Function to check for an undefined variable
+#------------------------------------------------------------------------------
+
+function fn_fail_if_missing() {
+  local message=$1
+  local string=$2
+  if [[ -z "${string}" ]]
+  then
+    fn_print_error "ERROR: ${message}"
+    exit 1
+  fi
+}
+
+#------------------------------------------------------------------------------
 # Short-form arguments and defaults
 #------------------------------------------------------------------------------
 
@@ -98,8 +112,8 @@ then
   exit 1
 fi
 
-# Assert that the mandatory argument is defined (using a function) *NEXT*
-
+# Assert that the mandatory argument is defined (using a function)
+fn_fail_if_missing "${BRED}mandatory_arg${COLOUR_OFF} is not defined" "${mandatory_arg:-}"
 
 # Arbitrary usage of args to avoid shellcheck warnings against the template
 echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
@@ -115,7 +129,5 @@ echo COUNT = $#
 
 trap fn_aborted INT TERM
 #------------------------------------------------------------------------------
-
-sleep 5
 
 exit 0
