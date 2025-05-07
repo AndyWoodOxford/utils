@@ -30,10 +30,10 @@ function fn_usage() {
   echo
   echo "This script does something useful."
   echo
-  fn_print_warning "Usage: $0 [-ahqv] ARG"
+  fn_print_warning "Usage: $0 [-ahqv] POSITIONAL"
   echo
   echo -e  "\033[1;36m""Positional arguments${COLOUR_OFF}"  # Bold Cyan
-  fn_print_tabbed_message "ARG  argument (required)"
+  fn_print_tabbed_message "POSITIONAL  argument (required)"
   echo
   echo -e  "\033[1;36m""Options${COLOUR_OFF}"
   fn_print_tabbed_message "-a  OPTIONAL   Optional argument [${DEFAULT_ARGUMENT}]"
@@ -101,8 +101,8 @@ while getopts "a:hm:qv" opt; do
   v)
     verbose_mode=true
     ;;
-  *)
-    fn_usage
+  [?])
+    shift
     ;;
   esac
 done
@@ -142,11 +142,15 @@ then
   exit 1
 fi
 
-#------------------------------------------------------------------------------
-# Mandatory positional argument
-#------------------------------------------------------------------------------
-shift
-echo COUNT = $#
+# Check for a single mandatory positional argument
+shift $((OPTIND - 1))
+if [ $# -ne 1 ]
+then
+  fn_print_error "ERROR: exactly 1 positional argument is required"
+  exit 1
+fi
+positional=$1
+echo -e "Positional argument is ${BWHITE}${positional}${COLOUR_OFF}"
 
 # Arbitrary usage of args to avoid shellcheck warnings against the template
 echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
