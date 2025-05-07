@@ -45,6 +45,19 @@ function fn_usage() {
 }
 
 #------------------------------------------------------------------------------
+# Interrupt abort signal (also needs the 'trap' command below)
+#------------------------------------------------------------------------------
+
+# Signal handler appears as unreachable to shellcheck
+# shellcheck disable=SC2317
+function fn_aborted() {
+  fn_print_warning "$0: Script aborted!!!"
+  echo
+  fn_print_warning "Warning e.g. Terraform state could be corrupted"
+  exit 2
+}
+
+#------------------------------------------------------------------------------
 # Short-form arguments and defaults
 #------------------------------------------------------------------------------
 
@@ -96,3 +109,13 @@ echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/de
 #------------------------------------------------------------------------------
 shift
 echo COUNT = $#
+
+#------------------------------------------------------------------------------
+# Intercept abort signal
+
+trap fn_aborted INT TERM
+#------------------------------------------------------------------------------
+
+sleep 5
+
+exit 0
