@@ -22,20 +22,25 @@ cwd=$(cd "$(dirname "${0}")" && pwd)
 # shellcheck source=/dev/null
 source "${cwd}/coloured-text.bash"
 
-#------------------------------------------------------------------------------
-# Usage. This code uses functions from "coloured-text.bash".
-#------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------------
+# Usage. This code uses functions from "coloured-text.bash" as well as hardwired colour macros
+#---------------------------------------------------------------------------------------------
 
 function fn_usage() {
   echo
   echo "This script does something useful."
   echo
-  fn_print_warning "Usage: $0 [-ahqv]"
+  fn_print_warning "Usage: $0 [-ahqv] ARG"
   echo
-  fn_print_tabbed_message "-a  VALUE  Argument taking a value [${DEFAULT_ARGUMENT}]"
-  fn_print_tabbed_message "-h         Show this usage message and exit"
-  fn_print_tabbed_message "-q         Quiet mode"
-  fn_print_tabbed_message "-v         Verbose mode"
+  echo -e  "\033[1;36m""Positional arguments${COLOUR_OFF}"  # Bold Cyan
+  fn_print_tabbed_message "ARG  argument (required)"
+  echo
+  echo -e  "\033[1;36m""Options${COLOUR_OFF}"
+  fn_print_tabbed_message "-a  OPTIONAL   Optional argument [${DEFAULT_ARGUMENT}]"
+  fn_print_tabbed_message "-h             Show this usage message and exit"
+  fn_print_tabbed_message "-m  MANDATORY  Mandatory argument"
+  fn_print_tabbed_message "-q             Quiet mode"
+  fn_print_tabbed_message "-v             Verbose mode"
   echo
 }
 
@@ -45,17 +50,21 @@ function fn_usage() {
 
 DEFAULT_ARGUMENT="hello"
 
-argument="${DEFAULT_ARGUMENT}"
+optional_arg="${DEFAULT_ARGUMENT}"
+mandatory_arg=
 quiet_mode=false
 verbose_mode=false
-while getopts "a:hqv" opt; do
+while getopts "a:hm:qv" opt; do
   case "${opt}" in
   a)
-    argument=$OPTARG
+    optional_arg=$OPTARG
     ;;
   h | \?)
     fn_usage
     exit 0
+    ;;
+  m)
+    mandatory_arg=$OPTARG
     ;;
   q)
     quiet_mode=true
@@ -69,5 +78,21 @@ while getopts "a:hqv" opt; do
   esac
 done
 
+# Assert that the mandatory argument is defined
+if [[ -z "${mandatory_arg:-}" ]]
+then
+  fn_print_error "ERROR: the 'MANDATORY' arg must be defined ('-m' option)"
+  exit 1
+fi
+
+# Assert that the mandatory argument is defined (using a function) *NEXT*
+
+
 # Arbitrary usage of args to avoid shellcheck warnings against the template
-echo "${argument}" "${quiet_mode}" "${verbose_mode}" >/dev/null
+echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
+
+#------------------------------------------------------------------------------
+# Mandatory positional argument
+#------------------------------------------------------------------------------
+shift
+echo COUNT = $#
