@@ -50,6 +50,28 @@ function fn_usage() {
 }
 
 #------------------------------------------------------------------------------
+# Check that bash version supports associative arrays (v4 or above).
+# Call is skipped since I am currently running 3.2.57.
+#------------------------------------------------------------------------------
+
+fn_check_bash_version() {
+  BASH="$(command -v bash)"
+  set +o errexit # read hits EOF and returns non-zero exit code
+  IFS=$'\n' read -d '' -r -a bash_version_stdout < <("${BASH}" --version)
+  set -o errexit
+  bash_version_stdout_header="${bash_version_stdout[0]}"
+  bash_version_full="${bash_version_stdout_header//GNU bash, version /}"
+  bash_version_major="${bash_version_full:0:1}"
+  if (( $(echo "${bash_version_major} < 4" | bc -l) ))
+  then
+    fn_print_error "ERROR! bash version 4 or higher is needed to run this script - found \"${bash_version_full}\""
+    exit 1
+  fi
+}
+
+false && fn_check_bash_version
+
+#------------------------------------------------------------------------------
 # Short-form arguments and defaults
 #------------------------------------------------------------------------------
 
