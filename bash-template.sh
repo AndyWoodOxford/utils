@@ -130,16 +130,12 @@ fn_fail_if_missing "${BRED}mandatory_arg${COLOUR_OFF} is not defined" "${mandato
     exit 1
   fi
 
-
 # Check for mutually exclusive options
 if [[ "${quiet_mode}" = true ]] && [[ "${verbose_mode}" = true ]]
 then
   fn_print_error "ERROR: the '-q' and '-v' options are mutually exclusive"
   exit 1
 fi
-
-# Arbitrary usage of args to avoid shellcheck warnings against the template
-echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
 
 #------------------------------------------------------------------------------
 # Mandatory positional argument
@@ -153,4 +149,24 @@ echo COUNT = $#
 trap fn_aborted INT TERM
 #------------------------------------------------------------------------------
 
-exit 0
+# Arbitrary usage of args to avoid shellcheck warnings against the template
+echo "${mandatory_arg}" "${optional_arg}" "${quiet_mode}" "${verbose_mode}" >/dev/null
+
+#------------------------------------------------------------------------------
+# Measuring the elapsed running time
+#------------------------------------------------------------------------------
+
+function fn_goodbye() {
+  local started_at=$1
+
+  ended_at=$(date +%s)
+  running_time=$((ended_at - started_at))
+  echo
+  echo -e "Total running time was ${GREEN}${running_time}${COLOUR_OFF} seconds. Goodbye!"
+  echo
+  exit 0
+}
+
+started_at=$(date +%s)
+sleep 3
+fn_goodbye "${started_at}"
