@@ -12,4 +12,5 @@ trapping etc. Uses the `coloured-text.bash` code.
 
 ## Python
 A collection of common but simple mathematical algorithms
-  * [factorial_loop.py](./python/factorial_loop.py) - factorial (using a for-loop)
+* [factorial_loop.py](./python/factorial_loop.py) - factorial (using a for-loop)
+* [factorial_recursion.py](./python/factorial_recursion.py) - factorial (using recursion)
