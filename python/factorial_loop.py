@@ -45,4 +45,4 @@ if __name__ == '__main__':
     configure_logging(args)
 
     answer = factorial(args.number)
-    print('Result = %d' % answer)
+    print('%d! = %d' % (args.number, answer))
