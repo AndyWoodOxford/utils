@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 
 """
-Calculates the factorial of a non-negative integer. The initial implementation
-is hard-wired to a fixed integer. The algorithm uses a for-loop.
+Calculates the factorial of a non-negative integer. The algorithm uses a for-loop.
 """
 
 import argparse
 import logging
 
-N = 5
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-q', '--quiet', action='store_true')
-    parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('number', type=int)
+    parser.add_argument('-q', '--quiet', help='Quiet mode', action='store_true')
+    parser.add_argument('-v', '--verbose', help='Verbose mode', action='store_true')
     return parser.parse_args()
 
 
@@ -29,8 +28,6 @@ def configure_logging(args):
 
 
 def factorial(n):
-    logging.debug('Calculating factorial of %d' % n)
-
     if n < 0:
         logging.error('Cannot calculate factorial of a negative number!')
         raise ValueError('Invalid value %d - n must be positive' % n)
@@ -47,5 +44,5 @@ if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    answer = factorial(N)
+    answer = factorial(args.number)
     print('Result = %d' % answer)
