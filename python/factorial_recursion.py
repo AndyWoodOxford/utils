@@ -27,7 +27,14 @@ def configure_logging(args):
     logging.basicConfig(level=log_level, format='%(levelname)s: %(message)s')
 
 def factorial(n):
-    if n == 1:
+    if n < 0:
+        logging.error('Cannot calculate factorial of a negative number!')
+        raise ValueError('Invalid value %d - n must be positive' % n)
+
+    if n ==0:
+        logging.debug('n = 0, returning ')
+        return 1
+    elif n == 1:
         logging.debug('n = 1, returning ')
         return 1
     else:
@@ -37,10 +44,6 @@ def factorial(n):
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
-
-    if args.number < 0:
-        logging.error('Cannot calculate factorial of a negative number!')
-        raise ValueError('Invalid value %d - n must be positive' % n)
 
     answer = factorial(args.number)
     print('%d! = %d' % (args.number, answer))
