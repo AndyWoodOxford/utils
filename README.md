@@ -11,6 +11,7 @@ A template shell script with scaffolding for optional and mandatory arguments, s
 trapping etc. Uses the `coloured-text.bash` code.
 
 ## Python
-A collection of common but simple mathematical algorithms
+A collection of common but simple mathematical algorithms that are helping me to learn Python:
 * [factorial_loop.py](./python/factorial_loop.py) - factorial (using a for-loop)
 * [factorial_recursion.py](./python/factorial_recursion.py) - factorial (using recursion)
+* [prime_factors.py](./python/prime_factors.py) - prime factoring
