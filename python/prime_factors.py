@@ -75,6 +75,20 @@ if __name__ == '__main__':
 
     factors = prime_factors(args.number)
     if not factors:
-        print('No prime factors found - %d is a prime number' % args.number)
+        print('No prime factors found: %d is a prime number' % args.number)
     else:
-        print(factors)
+        index_list = (range(len(factors)))
+        factors_indexed = { index: factor for index, factor in zip(index_list, factors) }
+        print('DICT: %s' % factors_indexed)
+
+        output = ''
+        index = 0
+        for factor in factors:
+            if factors.count(factor) == 1:
+                output += '  %d' % factor
+                index += 1
+            else:
+                output += '  %d^%d' % (factor, factors.count(factor))
+                index += factors.count(factor)
+
+        print('The prime factors of %d are: %s' % (args.number, output))
