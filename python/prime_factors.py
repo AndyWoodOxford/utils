@@ -79,16 +79,27 @@ if __name__ == '__main__':
     else:
         index_list = (range(len(factors)))
         factors_indexed = { index: factor for index, factor in zip(index_list, factors) }
-        print('DICT: %s' % factors_indexed)
+        count_distinct = len(set(factors_indexed.values()))
 
-        output = ''
+        print('LEN %d' % len(factors))
+
         index = 0
-        for factor in factors:
-            if factors.count(factor) == 1:
-                output += '  %d' % factor
+        output = ''
+        while index < len(factors):
+            print('IDX %d' % index)
+            prime_factor = factors[index]
+            # Unique prime factor - capture and increment to the following one
+            if factors.count(prime_factor) == 1:
+                output += '%d' % prime_factor
+                if index < len(factors) - 1:
+                    output += ' * '
                 index += 1
+            # Repeated prime factor - construct exponent and shift the index by the count
             else:
-                output += '  %d^%d' % (factor, factors.count(factor))
-                index += factors.count(factor)
+                prime_factor_count = factors.count(prime_factor)
+                output += '%d^%d' % (prime_factor, prime_factor_count)
+                if index + prime_factor_count < len(factors):
+                    output += ' * '
+                index += prime_factor_count
 
         print('The prime factors of %d are: %s' % (args.number, output))
