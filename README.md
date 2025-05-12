@@ -15,4 +15,4 @@ A collection of common but simple mathematical algorithms that are helping me to
 * [factorial_loop.py](./python/factorial_loop.py) - factorial (using a for-loop)
 * [factorial_recursion.py](./python/factorial_recursion.py) - factorial (using recursion)
 * [prime_factors.py](./python/prime_factors.py) - prime factoring
-* [shared_birthday_odds.py](./python/shared_birthday_odds.py) - shared birthday probabilities
+* [birthday-paradox.py](./python/birthday-paradox.py) - the "birthday paradox"
