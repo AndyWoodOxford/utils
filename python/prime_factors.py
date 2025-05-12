@@ -27,9 +27,6 @@ def configure_logging(args):
     logging.basicConfig(level=log_level, format='%(levelname)s: %(message)s')
 
 
-# 1. need "retries" for each divisor e.g. 24 => 2,2,2,3
-# 2. factor itself must be prime => separate function, abort as soon as a smaller factor is found?
-
 def is_prime(number):
     factor = 2
     while factor < number:
@@ -38,6 +35,8 @@ def is_prime(number):
         factor += 1
     return True
 
+# Case of number being a prime
+# Clean up logging
 
 def prime_factors(number):
     logging.debug('Calculating prime factors for %d' % number)
@@ -45,6 +44,17 @@ def prime_factors(number):
     dividend = number
     divisor = 2
     while True:
+        # All integers are divisible by 1 so the factoring is now complete
+        if dividend == 1:
+            logging.debug('Dividend is now 1 - prime factoring is complete')
+            break
+
+        # The number is a prime if the divisor has passed its square root
+        if pow(divisor, 2) > number:
+            logging.debug('Divisor %d is larger than the square root of %d - quitting loop' % (divisor, number))
+            break
+
+        # If the divisor is prime and is a factor then capture and retry
         logging.debug('Trying divisor %d' % divisor)
         if is_prime(divisor):
             logging.debug('  Divisor is a prime')
@@ -55,18 +65,8 @@ def prime_factors(number):
                 dividend = dividend // divisor
                 logging.debug('  Dividend is now %d' % dividend)
                 continue
-            else:
-                logging.debug('  Divisor is not a prime factor')
-        else:
-            logging.debug('Divisor is not a prime')
 
-        # All integers are divisible by 1 so the work is complete
-        if dividend == 1:
-            logging.debug('Dividend is now 1 - prime factoring is complete')
-            break
-
-        # Current divisor has now been drained - increment
-        logging.debug('HERE')
+        # Otherwise try the next integer
         divisor += 1
 
     return factors
