@@ -35,9 +35,6 @@ def is_prime(number):
         factor += 1
     return True
 
-# Case of number being a prime
-# Clean up logging
-
 def prime_factors(number):
     logging.debug('Calculating prime factors for %d' % number)
     factors = ()
@@ -49,9 +46,9 @@ def prime_factors(number):
             logging.debug('Dividend is now 1 - prime factoring is complete')
             break
 
-        # The number is a prime if the divisor has passed its square root
-        if pow(divisor, 2) > number:
-            logging.debug('Divisor %d is larger than the square root of %d - quitting loop' % (divisor, number))
+        # The number is a prime if there are no factors found and the divisor is past the square root
+        if not factors and pow(divisor, 2) > number:
+            logging.debug('No factors have been found and the divisor %d is larger than the square root of %d - quitting loop' % (divisor, number))
             break
 
         # If the divisor is prime and is a factor then capture and retry
@@ -76,5 +73,8 @@ if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    answer = prime_factors(args.number)
-    print(answer)
+    factors = prime_factors(args.number)
+    if not factors:
+        print('No prime factors found - %d is a prime number' % args.number)
+    else:
+        print(factors)
