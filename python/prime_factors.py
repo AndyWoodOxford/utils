@@ -27,8 +27,49 @@ def configure_logging(args):
     logging.basicConfig(level=log_level, format='%(levelname)s: %(message)s')
 
 
+# 1. need "retries" for each divisor e.g. 24 => 2,2,2,3
+# 2. factor itself must be prime => separate function, abort as soon as a smaller factor is found?
+
+def is_prime(number):
+    factor = 2
+    while factor < number:
+        if number % factor == 0:
+            return False
+        factor += 1
+    return True
+
+
 def prime_factors(number):
-    return 1
+    logging.debug('Calculating prime factors for %d' % number)
+    factors = ()
+    dividend = number
+    divisor = 2
+    while True:
+        logging.debug('Trying divisor %d' % divisor)
+        if is_prime(divisor):
+            logging.debug('  Divisor is a prime')
+            if dividend % divisor == 0:
+                # Divisor is a prime factor - capture and retry this value
+                logging.debug('  Divisor is a prime factor')
+                factors += (divisor,)
+                dividend = dividend // divisor
+                logging.debug('  Dividend is now %d' % dividend)
+                continue
+            else:
+                logging.debug('  Divisor is not a prime factor')
+        else:
+            logging.debug('Divisor is not a prime')
+
+        # All integers are divisible by 1 so the work is complete
+        if dividend == 1:
+            logging.debug('Dividend is now 1 - prime factoring is complete')
+            break
+
+        # Current divisor has now been drained - increment
+        logging.debug('HERE')
+        divisor += 1
+
+    return factors
 
 
 if __name__ == '__main__':
@@ -36,4 +77,4 @@ if __name__ == '__main__':
     configure_logging(args)
 
     answer = prime_factors(args.number)
-    print('%d! = %d' % (args.number, answer))
+    print(answer)
