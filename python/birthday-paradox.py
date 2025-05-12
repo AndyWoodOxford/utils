@@ -47,4 +47,4 @@ if __name__ == '__main__':
     configure_logging(args)
 
     people = calculate_birthdays()
-    print('%d people are needed for a better-than-evens chance of 2 sharing a birthday' % people)
+    print('Only %d people are needed for a better-than-evens chance of 2 sharing a birthday' % people)
