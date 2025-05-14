@@ -10,6 +10,9 @@ A collection of macros and functions that support the output of coloured text.
 A template shell script with scaffolding for optional and mandatory arguments, signal
 trapping etc. Uses the `coloured-text.bash` code.
 
+### ssm.sh
+**WIP** Connect to AWS EC2 instances using this wrapper to AWS Systems Manager SSM agents.
+
 ## Python
 A collection of common but simple mathematical algorithms that are helping me to learn Python:
 * [factorial_loop.py](./python/factorial_loop.py) - factorial (using a for-loop)

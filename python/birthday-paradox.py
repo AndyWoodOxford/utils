@@ -7,7 +7,9 @@ from fractions import Fraction
 """
 Calculates the minimum number of people needed to achieve a better-than-evens chance
 of two sharing a birthday. Assumes that birthdays are uniformly distributed over
-a 365-day year. 
+a 365-day year.
+
+ 
 """
 
 PROBABILITY_THRESHOLD = 0.5
