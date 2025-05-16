@@ -46,26 +46,38 @@ function fn_check_env_var() {
 }
 
 fn_check_requirements() {
-  (
-    AWS=$(command -v aws)
-    if [[ -z "${AWS:-}" ]]
-    then
-      fn_print_error "ERROR the AWS CLI was not found!"
-      exit 1
-    fi
-  ) && true
-
   fn_check_env_var "${BWHITE}AWS_ACCESS_KEY_ID${COLOUR_OFF} is not defined" "${AWS_ACCESS_KEY_ID:-}"
   fn_check_env_var "${BWHITE}AWS_SECRET_ACCESS_KEY${COLOUR_OFF} is not defined" "${AWS_SECRET_ACCESS_KEY:-}"
 }
 
 fn_list_instances() {
-  echo TODO
+  local aws_region=$1
+  local verbose=$2
+
+  if [ "${verbose}" = true ]
+  then
+    echo -e "Executing \"${AWS} ec2 describe-instances\" in the ${aws_region} region"
+  fi
+  set +o errexit
+  # shellcheck disable=SC2086
+  IFS=$'\n' read -d '' -r -a name_tags < <("${AWS}"                    \
+    ec2 describe-instances --region "${aws_region}"                    \
+    --filters "Name=instance-state-name,Values=running"                \
+    --query "Reservations[*].Instances[*].Tags[?Key=='Name'].Value"    \
+    --output text | sort)
+  set -o errexit
+
+  if [ ${#name_tags[@]} -eq 0 ]
+  then
+    fn_print_warning "No instances found - quitting"
+    exit 0
+  fi
 }
 
 ############
 # ENTRY
 
+AWS=$(command -v aws)
 DEFAULT_AWS_REGION="eu-west-2"
 
 fn_check_requirements
@@ -103,9 +115,15 @@ while getopts "dhlqr:v" opt; do
   esac
 done
 
+if [ "${quiet_mode}" = true ] && [ "${verbose_mode}" = true ]
+then
+  fn_print_error "ERROR: the '-q' and '-v' options are mutually exclusive"
+  exit 1
+fi
+
 if [ "${list_mode}" ]
 then
-  fn_list_instances
+  fn_list_instances "${aws_region}" "${verbose_mode}"
   exit 0
 fi
 

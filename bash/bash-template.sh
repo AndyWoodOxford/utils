@@ -136,7 +136,7 @@ fn_fail_if_missing "${BRED}mandatory_arg${COLOUR_OFF} is not defined" "${mandato
   fi
 
 # Check for mutually exclusive options
-if [[ "${quiet_mode}" = true ]] && [[ "${verbose_mode}" = true ]]
+if [ "${quiet_mode}" = true ] && [ "${verbose_mode}" = true ]
 then
   fn_print_error "ERROR: the '-q' and '-v' options are mutually exclusive"
   exit 1
