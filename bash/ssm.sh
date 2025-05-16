@@ -18,7 +18,6 @@ fn_usage() {
   echo
   fn_print_warning "Usage:"
   fn_print_warning "  $0 [-l]"
-  fn_print_warning "  $0 [-dqrv] INSTANCE_ID"
   fn_print_warning "  $0 [-dqrv] INSTANCE_NAME_TAG"
   echo
   echo -e  "\033[1;36m""Options${COLOUR_OFF}"
@@ -135,9 +134,17 @@ then
   exit 1
 fi
 
-if [ "${list_mode}" ]
+if [ "${list_mode}" = true ]
 then
   fn_list_instances "${aws_region}" "${verbose_mode}"
+  exit 0
+fi
+
+# Positional argument is an instance Name or ID
+shift $(( OPTIND-1 ))
+if [[ $# -eq 0 ]]
+then
+  fn_print_warning "I have nothing to do! Please provide an instance id or name, or the '-l' option for listing instances."
   exit 0
 fi
 
