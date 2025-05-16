@@ -25,6 +25,7 @@ fn_usage() {
   echo
   fn_print_warning "Usage:"
   fn_print_warning "  $0 [-l]"
+  fn_print_warning "  $0 [-dqrv] INSTANCE_ID"
   fn_print_warning "  $0 [-dqrv] INSTANCE_NAME_TAG"
   echo
   echo -e  "\033[1;36m""Options${COLOUR_OFF}"
@@ -38,7 +39,7 @@ fn_usage() {
   echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
   echo
   echo -e "${BWHITE}NOTE${COLOUR_OFF} Identically-named instances, e.g. those managed by an auto-scaling group"
-  echo    "are not supported."
+  echo    "are not (yet) supported."
   echo
 }
 
