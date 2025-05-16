@@ -90,6 +90,7 @@ fn_list_instances() {
   printf_fmt="  ${BIGREEN}%-32s${COLOUR_OFF} ${BWHITE}%s"
   for name_tag in "${name_tags[@]}"
   do
+    # shellcheck disable=SC2059
     instance_info=$(printf "${printf_fmt}" "${name_tag}")
     echo -e "${instance_info}"
   done
