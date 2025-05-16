@@ -4,8 +4,8 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-# The shellcheck tool cannot follow a non-constant source so need to ignore for each inclusion
 cwd=$(cd "$(dirname "${0}")" && pwd)
+# See https://www.shellcheck.net/wiki/SC1091 (or, use 'shellcheck -x')
 # shellcheck source=/dev/null
 source "${cwd}/coloured-text.bash"
 
@@ -31,7 +31,7 @@ fn_usage() {
   echo
   echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
   echo
-  echo "ASG note..."
+  echo -e "${BWHITE}TODO${COLOUR_OFF} Note on ASG instances / instance id argument."
   echo
 }
 
