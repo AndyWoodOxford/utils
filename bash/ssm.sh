@@ -101,6 +101,7 @@ fn_check_requirements
 
 AWS=$(command -v aws)
 DEFAULT_AWS_REGION="eu-west-2"
+AWS_COMMAND_PREFIX=""
 
 # Parse command line
 aws_region="${DEFAULT_AWS_REGION}"
@@ -112,6 +113,7 @@ while getopts "dhlqr:v" opt; do
   case "${opt}" in
   d)
     dryrun_mode=true
+    AWS_COMMAND_PREFIX="${YELLOW}DRY RUN${COLOUR_OFF}"
     ;;
   h | \?)
     fn_usage
@@ -159,8 +161,14 @@ instance=$1
 # ID
 if [[ "${instance}" = i-* ]]
 then
-  # shellcheck disable=SC2086
-  "${AWS}" ssm start-session --region "${aws_region}" --target "${instance}"
+  aws_cmd="${AWS} ssm start-session --region ${aws_region} --target ${instance}"
+  if [[ "$dryrun_mode" = true ]]
+  then
+    echo -e "${AWS_COMMAND_PREFIX} ${aws_cmd}"
+  else
+    # shellcheck disable=SC2086
+    "${AWS}" ssm start-session --region "${aws_region}" --target "${instance}"
+  fi
 
 # Name
 else
