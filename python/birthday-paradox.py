@@ -4,12 +4,25 @@ import argparse
 import logging
 from fractions import Fraction
 
+# An EVENT is a subset of all possible outcomes of an experiment, e.g. rolling an odd
+# number on a (fair) die.
+# A SIMPLE EVENT is one with a single outcome, e.g. rolling a 6 on a (fair) die.
+# A PROBABILITY of an event is the likelihood of it happening and is a number between 0
+# (the event cannot happen) and 1 (the event is certain to happen).
+# The sum of the probabilities of all events is 1 - so the probability of a simple
+# event *not* happening is 1 minus that of it happening.
+# The probability of two independent events occurring together is the product
+# of the probabilities of the events, e.g. that of rolling successive 6's on a (fair)
+# die is 1/6 * 1/6 = 1/36.
+
+# The algorithm used in this script makes use of all of the above. In brief, it
+# calculates the probability of two or more people *not* sharing a birthday,
+# increasing the number of people until that probability gets to below 0.50.
+
 """
 Calculates the minimum number of people needed to achieve a better-than-evens chance
 of two sharing a birthday. Assumes that birthdays are uniformly distributed over
 a 365-day year.
-
- 
 """
 
 PROBABILITY_THRESHOLD = 0.5
