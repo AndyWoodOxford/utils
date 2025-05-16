@@ -37,7 +37,8 @@ fn_usage() {
   echo
   echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
   echo
-  echo -e "${BWHITE}TODO${COLOUR_OFF} Note on ASG instances / instance id argument."
+  echo -e "${BWHITE}NOTE${COLOUR_OFF} Identically-named instances, e.g. those managed by an auto-scaling group"
+  echo    "are not supported."
   echo
 }
 
@@ -161,20 +162,63 @@ instance=$1
 # ID
 if [[ "${instance}" = i-* ]]
 then
+  if [[ "${verbose_mode}" = true ]]
+  then
+    echo -e "Starting an SSM session with  ${BWHITE}${instance}${COLOUR_OFF} in ${BWHITE}$aws_region${COLOUR_OFF}"
+  fi
+
   aws_cmd="${AWS} ssm start-session --region ${aws_region} --target ${instance}"
   if [[ "$dryrun_mode" = true ]]
   then
     echo -e "${AWS_COMMAND_PREFIX} ${aws_cmd}"
   else
-    # shellcheck disable=SC2086
-    "${AWS}" ssm start-session --region "${aws_region}" --target "${instance}"
+    eval "${aws_cmd}"
   fi
 
 # Name
 else
-  echo "TODO - connect to $instance"
-fi
+  if [[ "${verbose_mode}" = true ]]
+  then
+    echo -e "Getting the InstanceId for the instance with the \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}\""
+  fi
 
+  set +o errexit
+  # shellcheck disable=SC2086
+  IFS=$'\n' read -d '' -r -a instance_ids < <(
+    aws ec2 describe-instances ${aws_profile_option:-}  \
+      --region "${aws_region}"                          \
+      --filters                                         \
+          "Name=instance-state-name,Values=running"     \
+          "Name=tag:Name,Values=${instance}"            \
+      --query "Reservations[*].Instances[*].InstanceId" \
+      --output text)
+  set -o errexit
+
+  instance_count=${#instance_ids[@]}
+  if [[ "${instance_count}" -eq 0 ]]
+  then
+    fn_print_error "ERROR: Could not find an instance having the \"Name\" tag set to \"${instance}\""
+    exit 2
+   # Single match - connect
+  elif [[ "${instance_count}" -eq 1 ]]
+  then
+    instance_id="${instance_ids[0]}"
+    if [[ "${verbose_mode}" = true ]]
+    then
+      echo -e "The InstanceId for \"${BGREEN}${instance}${COLOUR_OFF}\" is \"${BGREEN}${instance_id}${COLOUR_OFF}\""
+    fi
+    aws_cmd="${AWS} ssm start-session --region ${aws_region} --target ${instance_id}"
+    if [[ "$dryrun_mode" = true ]]
+    then
+      echo -e "${AWS_COMMAND_PREFIX} ${aws_cmd}"
+    else
+      eval "${aws_cmd}"
+    fi
+  else
+    fn_print_error "ERROR: ${BGREEN}${instance_count}${COLOUR_OFF} instances have the same \"Name\" tag \"${BGREEN}${instance}${COLOUR_OFF}\""
+    exit 3
+  fi
+fi
 
 exit 0
 
