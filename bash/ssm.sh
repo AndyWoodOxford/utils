@@ -9,6 +9,13 @@ cwd=$(cd "$(dirname "${0}")" && pwd)
 # shellcheck source=/dev/null
 source "${cwd}/coloured-text.bash"
 
+# shellcheck disable=SC2317
+function fn_abort() {
+  fn_print_warning "$0: Interrupt signal detected!"
+  echo
+  exit 2
+}
+
 fn_usage() {
   echo
   echo "Wrapper for the AWS System Manager SSM agent used to connect to EC2 instances."
@@ -88,12 +95,12 @@ fn_list_instances() {
 
 ############
 # ENTRY
+trap fn_abort INT TERM
 
 fn_check_requirements
 
 AWS=$(command -v aws)
 DEFAULT_AWS_REGION="eu-west-2"
-
 
 # Parse command line
 aws_region="${DEFAULT_AWS_REGION}"
@@ -147,6 +154,19 @@ then
   fn_print_warning "I have nothing to do! Please provide an instance id or name, or the '-l' option for listing instances."
   exit 0
 fi
+instance=$1
+
+# ID
+if [[ "${instance}" = i-* ]]
+then
+  # shellcheck disable=SC2086
+  "${AWS}" ssm start-session --region "${aws_region}" --target "${instance}"
+
+# Name
+else
+  echo "TODO - connect to $instance"
+fi
+
 
 exit 0
 
