@@ -38,8 +38,8 @@ fn_usage() {
   echo
   echo -e "The ${BWHITE}-q${COLOUR_OFF} and ${BWHITE}-v${COLOUR_OFF} arguments are mutually exclusive."
   echo
-  echo -e "${BWHITE}NOTE${COLOUR_OFF} Identically-named instances, e.g. those managed by an auto-scaling group"
-  echo    "are not (yet) supported."
+  echo -e "${BWHITE}NB${COLOUR_OFF} In the case of identically-named instances, e.g. those managed by an"
+  echo    "auto-scaling group, the script will show the InstanceIds and prompt for a target."
   echo
 }
 
@@ -180,7 +180,7 @@ then
 else
   if [[ "${verbose_mode}" = true ]]
   then
-    echo -e "Getting the InstanceId for the instance with the \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}\""
+    echo -e "Getting the InstanceId for the instance(s) with the \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}\""
   fi
 
   set +o errexit
@@ -196,11 +196,12 @@ else
   set -o errexit
 
   instance_count=${#instance_ids[@]}
+
   if [[ "${instance_count}" -eq 0 ]]
   then
     fn_print_error "ERROR: Could not find an instance having the \"Name\" tag set to \"${instance}\""
     exit 2
-   # Single match - connect
+
   elif [[ "${instance_count}" -eq 1 ]]
   then
     instance_id="${instance_ids[0]}"
@@ -215,9 +216,39 @@ else
     else
       eval "${aws_cmd}"
     fi
+
   else
-    fn_print_error "ERROR: ${BGREEN}${instance_count}${COLOUR_OFF} instances have the same \"Name\" tag \"${BGREEN}${instance}${COLOUR_OFF}\""
-    exit 3
+    echo -e "I have found ${BGREEN}${instance_count}${COLOUR_OFF} instances with a \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}:"
+    echo
+    instance_index=0
+    for instance_id in "${instance_ids[@]}"
+    do
+      (( instance_index++ )) || true
+      echo -e "\t${BWHITE}${instance_index}${COLOUR_OFF}\t${BGREEN}${instance_id}${COLOUR_OFF}"
+    done
+    echo
+    while true
+    do
+      read -r -p "Choose an index between 1 and ${instance_count}: " instance_index
+      if [[ ${instance_index} =~ ^[0-9]+$ && ${instance_index} -ge 1 && ${instance_index} -le ${instance_count} ]]
+      then
+        break
+      fi
+    done
+    index=$(( instance_index -1 ))
+    instance_id="${instance_ids[${index}]}"
+
+    if [[ "${verbose_mode}" = true ]]
+    then
+      echo -e "Starting an SSM session with ${BWHITE}${instance_id}${COLOUR_OFF} in ${BWHITE}$aws_region${COLOUR_OFF}"
+    fi
+    aws_cmd="${AWS} ssm start-session --region ${aws_region} --target ${instance_id}"
+    if [[ "$dryrun_mode" = true ]]
+    then
+      echo -e "${AWS_COMMAND_PREFIX} ${aws_cmd}"
+    else
+      eval "${aws_cmd}"
+    fi
   fi
 fi
 
