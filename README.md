@@ -11,7 +11,9 @@ A template shell script with scaffolding for optional and mandatory arguments, s
 trapping etc. Uses the `coloured-text.bash` code.
 
 ### ssm.sh
-**WIP** Connect to AWS EC2 instances using this wrapper to AWS Systems Manager SSM agents.
+Connect to AWS EC2 instances using this wrapper to AWS Systems Manager SSM agents. Access is controlled by
+IAM permissions and not via an `ssh` key and firewalling rules.
+See the [installation instructions for the Session Manager plugin](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html).
 
 ## Python
 A collection of common but simple mathematical algorithms that are helping me to learn Python:
