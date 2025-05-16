@@ -46,6 +46,12 @@ function fn_check_env_var() {
 }
 
 fn_check_requirements() {
+  awscli="$(command -v aws)" || true
+  if [[ -z "${awscli:-}" ]]
+  then
+    fn_print_error "Cannot find the AWS CLI command!"
+    exit 1
+  fi
   fn_check_env_var "${BWHITE}AWS_ACCESS_KEY_ID${COLOUR_OFF} is not defined" "${AWS_ACCESS_KEY_ID:-}"
   fn_check_env_var "${BWHITE}AWS_SECRET_ACCESS_KEY${COLOUR_OFF} is not defined" "${AWS_SECRET_ACCESS_KEY:-}"
 }
@@ -56,7 +62,7 @@ fn_list_instances() {
 
   if [ "${verbose}" = true ]
   then
-    echo -e "Executing \"${AWS} ec2 describe-instances\" in the ${aws_region} region"
+    echo -e "Executing \"${AWS} ec2 describe-instances\" in the ${aws_region} region..."
   fi
   set +o errexit
   # shellcheck disable=SC2086
@@ -72,15 +78,23 @@ fn_list_instances() {
     fn_print_warning "No instances found - quitting"
     exit 0
   fi
+
+  printf_fmt="  ${BIGREEN}%-32s${COLOUR_OFF} ${BWHITE}%s"
+  for name_tag in "${name_tags[@]}"
+  do
+    instance_info=$(printf "${printf_fmt}" "${name_tag}")
+    echo -e "${instance_info}"
+  done
 }
 
 ############
 # ENTRY
 
+fn_check_requirements
+
 AWS=$(command -v aws)
 DEFAULT_AWS_REGION="eu-west-2"
 
-fn_check_requirements
 
 # Parse command line
 aws_region="${DEFAULT_AWS_REGION}"
