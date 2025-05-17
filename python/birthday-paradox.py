@@ -15,9 +15,12 @@ from fractions import Fraction
 # of the probabilities of the events, e.g. that of rolling successive 6's on a (fair)
 # die is 1/6 * 1/6 = 1/36.
 
-# The algorithm used in this script makes use of all of the above. In brief, it
-# calculates the probability of two or more people *not* sharing a birthday,
-# increasing the number of people until that probability gets to below 0.50.
+# The algorithm used in this script makes use of all of the above. The event here is
+# two or more people *not* sharing a birthday. Starting with a single person, there
+# is a certainty that the event cannot happen, a probability of 1. As more people
+# are added, the probability decreases, very slightly at first. Eventually the
+# probability will drop below 0.5 - at this point, there is a better-than-evens chance
+# of two people sharing a birthday.
 
 """
 Calculates the minimum number of people needed to achieve a better-than-evens chance
