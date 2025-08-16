@@ -21,3 +21,4 @@ A collection of common but simple mathematical algorithms that are helping me to
 * [factorial_recursion.py](./python/factorial_recursion.py) - factorial (using recursion)
 * [prime_factors.py](./python/prime_factors.py) - prime factoring
 * [birthday-paradox.py](./python/birthday-paradox.py) - the "birthday paradox"
+* [concept2_erg_stats](./concept2_erg_stats.py) - Concept 2 rowing ergometer numbers
