@@ -67,5 +67,5 @@ def test_decimal_point_split_to_seconds():
 def test_decimal_point_seconds_to_split():
     seconds = 110.5
     expected_value = '1:50.5'
-    assert concept2_erg_stats.convert_split_to_seconds(seconds) == expected_value
+    assert concept2_erg_stats.convert_seconds_to_split(seconds) == expected_value
 

@@ -47,7 +47,7 @@ def convert_split_to_seconds(split):
 
 def convert_seconds_to_split(seconds):
     minutes, seconds = divmod(seconds, 60)
-    return '%s:%s' % (int(minutes), float(seconds))
+    return '%d:%04.1f' % (int(minutes), float(seconds))
 
 def tabulate_times(high_split, low_split, increment = 1.0):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
