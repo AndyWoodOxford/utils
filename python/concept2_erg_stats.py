@@ -28,29 +28,21 @@ def configure_logging(args):
     logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
 
 def verify_split(split):
-    print('SPLIT %s' % split)
-    pattern = re.compile('^(\\d){1}:(\\d){1,2}$')
+    pattern = re.compile('^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
     if not re.match(pattern, split):
-        print('FAILED MATCH')
         raise ValueError('The string "%s" is not a valid format for a split' % split)
-    print('PASSED MATCH')
     minutes = int(split.split(':')[0])
-    print('MINUTES %d' % minutes)
     if minutes < 1:
-        print('TOO LOW')
         raise ValueError('The split of "%s" is too low' % split)
     elif minutes >=4:
-        print('TOO HIGH')
         raise ValueError('The split of "%s" is too low' % split)
-    print('VERIFY OK')
 
 def convert_split_to_seconds(split):
     verify_split(split)
     logging.debug('Converting split %s into seconds.' % split)
     minutes = int(split.split(':')[0])
     seconds = float(split.split(':')[1])
-    print('SECONDS ARE %.1f' % seconds)
-    print('TOTAL %.1f seconds' % (minutes * 60 + seconds))
+    logging.debug('The split "%s" is %.1f seconds' % (split, (minutes * 60 + seconds)))
     return minutes * 60 + seconds
 
 def tabulate_times(high_split, low_split, increment = 1.0):
