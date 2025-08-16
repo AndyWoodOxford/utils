@@ -14,6 +14,11 @@ def test_invalid_split_missing_seconds():
     with pytest.raises(ValueError):
         concept2_erg_stats.verify_split(split)
 
+def test_invalid_split_decimal_places():
+    split = "2:00.123"
+    with pytest.raises(ValueError):
+        concept2_erg_stats.verify_split(split)
+
 def test_split_too_low():
     split = "0:59"
     with pytest.raises(ValueError):
