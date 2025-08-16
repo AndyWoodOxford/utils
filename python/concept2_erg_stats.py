@@ -49,21 +49,26 @@ def convert_seconds_to_split(seconds):
     minutes, seconds = divmod(seconds, 60)
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
+def get_header():
+    header_row = 'Split'.center(9) + '2K'.center(7) + '5K'.center(7)
+    return '%s\n%s' % (header_row, '-' * len(header_row))
+
 def tabulate_times(high_split, low_split, increment = 1.0):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
 
+    summary = ''
+    summary += get_header()
+
     split_seconds = start
     while split_seconds >= end:
         split_string = convert_seconds_to_split(split_seconds)
-        print('SPLIT %.1f / %s' % (split_seconds, split_string))
+        logging.debug('Calculating status for %.1f seconds / %s split' % (split_seconds, split_string))
         split_seconds -= increment
 
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
-
-
 
     tabulate_times(HIGH_SPLIT, LOW_SPLIT)
