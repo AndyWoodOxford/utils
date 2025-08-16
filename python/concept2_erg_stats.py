@@ -9,8 +9,8 @@ import argparse
 import logging
 import re
 
-HIGH_SPLIT = "2:30"
-LOW_SPLIT = "1:30"
+HIGH_SPLIT = "2:01"
+LOW_SPLIT = "1:50"
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -45,10 +45,20 @@ def convert_split_to_seconds(split):
     logging.debug('The split "%s" is %.1f seconds' % (split, (minutes * 60 + seconds)))
     return minutes * 60 + seconds
 
+def convert_seconds_to_split(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    return '%s:%s' % (int(minutes), float(seconds))
+
 def tabulate_times(high_split, low_split, increment = 1.0):
-    logging.debug('Tabulating times for splits between %s to %s in increments of %.1f second(s).' % (high_split, low_split, increment))
+    logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
+
+    split_seconds = start
+    while split_seconds >= end:
+        split_string = convert_seconds_to_split(split_seconds)
+        print('SPLIT %.1f / %s' % (split_seconds, split_string))
+        split_seconds -= increment
 
 if __name__ == '__main__':
     args = parse_args()
