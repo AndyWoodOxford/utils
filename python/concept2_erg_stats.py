@@ -9,8 +9,13 @@ import argparse
 import logging
 import re
 
+# TODO make these configurable
 HIGH_SPLIT = "2:01"
 LOW_SPLIT = "1:50"
+
+DISTANCES = [2000, 5000]
+
+COLUMN_WIDTH = 13
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -50,22 +55,35 @@ def convert_seconds_to_split(seconds):
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
 def get_header():
-    header_row = 'Split'.center(9) + '2K'.center(7) + '5K'.center(7)
+    header_row = 'Split'.center(COLUMN_WIDTH) + '2K'.center(COLUMN_WIDTH) + '5K'.center(COLUMN_WIDTH)
     return '%s\n%s' % (header_row, '-' * len(header_row))
+
+def get_row(split_string, split_seconds):
+    fmt_template = '%s'  # for the split_string
+    time_strings = [split_string.center(COLUMN_WIDTH)]
+    for distance in DISTANCES:
+        time_seconds = split_seconds * (distance / 500)
+        time_string = convert_seconds_to_split(time_seconds)
+        time_strings.append(time_string.center(COLUMN_WIDTH))
+        fmt_template += '%s'
+
+    fmt_values = tuple(time_strings)
+    return fmt_template % fmt_values
 
 def tabulate_times(high_split, low_split, increment = 1.0):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
 
-    summary = ''
-    summary += get_header()
-
+    output = [get_header()]
     split_seconds = start
     while split_seconds >= end:
         split_string = convert_seconds_to_split(split_seconds)
-        logging.debug('Calculating status for %.1f seconds / %s split' % (split_seconds, split_string))
+        logging.debug('Calculating stats for %.1f seconds / %s split' % (split_seconds, split_string))
+        output.append(get_row(split_string, split_seconds))
         split_seconds -= increment
+
+    print('\n'.join(output))
 
 if __name__ == '__main__':
     args = parse_args()
