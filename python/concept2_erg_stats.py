@@ -38,7 +38,7 @@ def parse_args():
         '-I', '--split-increment',
         metavar='INCR',
         type=float,
-        help = 'Split increment in seconds, enter as e.g. "1", "1.5" etc',
+        help = 'Split increment in seconds, enter as e.g. "1", "1.5" etc. Rounded to one decimal place.',
         action='store',
         default=default_split_increment()
     )
@@ -131,5 +131,5 @@ if __name__ == '__main__':
     verify_split(args.low_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
     verify_increment(args.split_increment)
 
-    output = tabulate_times(args.high_split, args.low_split, args.split_increment)
+    output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1))
     print(output)
