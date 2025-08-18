@@ -10,11 +10,14 @@ import re
 
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
-DEFAULT_SPLIT_INCREMENT = 1
+DEFAULT_SPLIT_INCREMENT = 1.0
 
-DISTANCES = [2000, 5000]
+DEFAULT_DISTANCES = '2000,5000'
 
 COLUMN_WIDTH = 13
+
+def default_distances():
+    return DEFAULT_DISTANCES
 
 def default_high_split():
     return DEFAULT_HIGH_SPLIT
@@ -30,7 +33,8 @@ def parse_args():
     parser.add_argument(
         '-H', '--high-split',
         metavar='SPLIT',
-        help='High 500m split (i.e. slowest pace), enter as e.g. "2:15", "2:20.5" etc',
+        nargs='?',
+        help='High 500m split (i.e. slowest pace), enter as e.g. "2:15", "2:20.5" etc. [' + default_high_split() + ']',
         action='store',
         default=default_high_split()
     )
@@ -38,16 +42,23 @@ def parse_args():
         '-I', '--split-increment',
         metavar='INCR',
         type=float,
-        help = 'Split increment in seconds, enter as e.g. "1", "1.5" etc. Rounded to one decimal place.',
+        help = 'Split increment in seconds, enter as e.g. "1", "1.5" etc. Rounded to one decimal place. [' + str(default_split_increment()) + ']',
         action='store',
         default=default_split_increment()
     )
     parser.add_argument(
         '-L', '--low-split',
         metavar='SPLIT',
-        help='Low 500m split (i.e. fastest pace), enter as e.g. "2:00", "1:50.5" etc',
+        help='Low 500m split (i.e. fastest pace), enter as e.g. "2:00", "1:50.5" etc. [' + default_low_split() + ']',
         action='store',
         default=default_low_split()
+    )
+    parser.add_argument(
+        '-d', '--distances',
+        metavar='DISTANCES',
+        help='Coma-separated list of distances, e.g. "1000,2000,10000" [' + default_distances() + ']',
+        action='store',
+        default=default_distances()
     )
     parser.add_argument(
         '-q', '--quiet',
@@ -78,6 +89,15 @@ def verify_increment(increment):
     if increment < 0.1:
         raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
 
+def verify_distances(distances):
+    compiled_pattern = re.compile('^(\\w+)(,\\s*\\w+)*$')
+    if not re.match(compiled_pattern, distances):
+        raise ValueError('The distances string "%s" is not a valid comma-separated string' % distances)
+
+    for distance in distances.split(','):
+        if not distance.isnumeric():
+            raise ValueError('The distance "%s" is not numeric' % distance)
+
 def convert_split_to_seconds(split):
     logging.debug('Converting split %s into seconds.' % split)
     minutes = int(split.split(':')[0])
@@ -96,7 +116,7 @@ def get_header():
 def get_row(split_string, split_seconds):
     fmt_template = '%s'  # for the split_string
     time_strings = [split_string.center(COLUMN_WIDTH)]
-    for distance in DISTANCES:
+    for distance in [2000, 5000]:
         time_seconds = split_seconds * (distance / 500)
         time_string = convert_seconds_to_split(time_seconds)
         time_strings.append(time_string.center(COLUMN_WIDTH))
@@ -105,7 +125,7 @@ def get_row(split_string, split_seconds):
     fmt_values = tuple(time_strings)
     return fmt_template % fmt_values
 
-def tabulate_times(high_split, low_split, increment):
+def tabulate_times(high_split, low_split, increment, ):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
@@ -130,6 +150,9 @@ if __name__ == '__main__':
     verify_split(args.high_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
     verify_split(args.low_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
     verify_increment(args.split_increment)
+    verify_distances(args.distances)
+
+    # convert distances to list and pass in *args
 
     output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1))
     print(output)
