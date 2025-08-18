@@ -37,6 +37,7 @@ def parse_args():
     parser.add_argument(
         '-I', '--split-increment',
         metavar='INCR',
+        type=float,
         help = 'Split increment in seconds, enter as e.g. "1", "1.5" etc',
         action='store',
         default=default_split_increment()
@@ -57,7 +58,6 @@ def parse_args():
         help='Verbose mode',
         action='store_true')
     return parser.parse_args()
-
 
 
 def configure_logging(args):
@@ -107,7 +107,7 @@ def get_row(split_string, split_seconds):
     fmt_values = tuple(time_strings)
     return fmt_template % fmt_values
 
-def tabulate_times(high_split, low_split, increment = 1.0):
+def tabulate_times(high_split, low_split, increment):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
@@ -126,4 +126,4 @@ if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    tabulate_times(HIGH_SPLIT, LOW_SPLIT)
+    tabulate_times(args.high_split, args.low_split, args.split_increment)
