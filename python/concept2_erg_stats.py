@@ -69,18 +69,7 @@ def configure_logging(args):
 
     logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
 
-def verify_split(split):
-    pattern = re.compile('^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
-    if not re.match(pattern, split):
-        raise ValueError('The string "%s" is not a valid format for a split' % split)
-    minutes = int(split.split(':')[0])
-    if minutes < 1:
-        raise ValueError('The split of "%s" is too low' % split)
-    elif minutes >=4:
-        raise ValueError('The split of "%s" is too low' % split)
-
 def convert_split_to_seconds(split):
-    verify_split(split)
     logging.debug('Converting split %s into seconds.' % split)
     minutes = int(split.split(':')[0])
     seconds = float(split.split(':')[1])
@@ -111,6 +100,9 @@ def tabulate_times(high_split, low_split, increment):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
+
+    if start <= end:
+        raise ValueError('The "high" split must be greater than the "low" split')
 
     output = [get_header()]
     split_seconds = start
