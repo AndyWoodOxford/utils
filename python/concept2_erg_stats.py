@@ -69,6 +69,15 @@ def configure_logging(args):
 
     logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
 
+def verify_split(split, pattern):
+    compiled_pattern = re.compile(pattern)
+    if not re.match(compiled_pattern, split):
+        raise ValueError('The string "%s" is not a valid format for a split' % split)
+
+def verify_increment(increment):
+    if increment < 0.1:
+        raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
+
 def convert_split_to_seconds(split):
     logging.debug('Converting split %s into seconds.' % split)
     minutes = int(split.split(':')[0])
@@ -112,10 +121,15 @@ def tabulate_times(high_split, low_split, increment):
         output.append(get_row(split_string, split_seconds))
         split_seconds -= increment
 
-    print('\n'.join(output))
+    return '\n'.join(output)
 
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    tabulate_times(args.high_split, args.low_split, args.split_increment)
+    verify_split(args.high_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
+    verify_split(args.low_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
+    verify_increment(args.split_increment)
+
+    output = tabulate_times(args.high_split, args.low_split, args.split_increment)
+    print(output)
