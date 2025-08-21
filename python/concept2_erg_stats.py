@@ -9,6 +9,7 @@ import argparse
 import logging
 import re
 
+SPLIT_DISTANCE = 500
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
@@ -111,7 +112,7 @@ def convert_seconds_to_split(seconds):
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
 def convert_split_to_watts(split_seconds):
-    pace = split_seconds / 500.0
+    pace = split_seconds / SPLIT_DISTANCE
     logging.debug('A split of %0.1f seconds corresponds to a pace of %0.4fs/m' % (split_seconds, pace))
 
     watts = 2.8 / (pace ** 3)
@@ -143,7 +144,7 @@ def get_row(split_string, split_seconds, distances):
     # distance column(s)
     time_strings = [split_string.center(COLUMN_WIDTH)]
     for distance in distances:
-        time_seconds = split_seconds * (distance / 500)
+        time_seconds = split_seconds * (distance / SPLIT_DISTANCE)
         time_string = convert_seconds_to_split(time_seconds)
         time_strings.append(time_string.center(COLUMN_WIDTH))
         fmt_template += '%s'
