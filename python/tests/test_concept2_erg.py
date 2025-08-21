@@ -63,3 +63,14 @@ def test_invalid_increment():
     increment = 0.05
     with pytest.raises(ValueError):
         concept2_erg_stats.verify_increment(increment)
+
+# Ref. https://www.concept2.co.uk/training/watts-calculator
+def test_watts_normal_split():
+    split = '2:00'
+    expected_value = 202.5
+    assert concept2_erg_stats.convert_split_to_watts(split) == expected_value
+
+def test_watts_low_split():
+    split = '1:30.0'
+    expected_value = 480.1
+    assert concept2_erg_stats.convert_split_to_watts(split) == expected_value
