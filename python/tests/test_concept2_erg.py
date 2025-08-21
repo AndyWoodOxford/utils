@@ -7,27 +7,17 @@ import concept2_erg_stats
 def test_invalid_split():
     split = ''
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_arg_format(split)
+        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
 
 def test_invalid_split_missing_seconds():
     split = '2'
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_arg_format(split)
+        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
 
 def test_invalid_split_decimal_places():
     split = '2:00.123'
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_arg_format(split)
-
-def test_split_too_low():
-    split = '0:59'
-    with pytest.raises(ValueError):
-        concept2_erg_stats.verify_arg_format(split)
-
-def test_split_too_high():
-    split = '4:01'
-    with pytest.raises(ValueError):
-        concept2_erg_stats.verify_arg_format(split)
+        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
 
 def test_exact_minute_split_to_seconds():
     split = '2:00'
@@ -69,3 +59,7 @@ def test_decimal_point_seconds_to_split():
     expected_value = '1:50.5'
     assert concept2_erg_stats.convert_seconds_to_split(seconds) == expected_value
 
+def test_invalid_increment():
+    increment = 0.05
+    with pytest.raises(ValueError):
+        concept2_erg_stats.verify_increment(increment)

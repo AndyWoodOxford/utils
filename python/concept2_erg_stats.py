@@ -12,8 +12,8 @@ import re
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
-
 DEFAULT_DISTANCES = '2000,5000'
+SPLIT_REGEX = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$'
 
 COLUMN_WIDTH = 13
 
@@ -172,8 +172,8 @@ if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    verify_split(args.high_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
-    verify_split(args.low_split, pattern = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$')
+    verify_split(args.high_split, SPLIT_REGEX)
+    verify_split(args.low_split, SPLIT_REGEX)
     verify_increment(args.split_increment)
     verify_distances(args.distances)
 
