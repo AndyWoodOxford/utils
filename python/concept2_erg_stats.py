@@ -100,28 +100,7 @@ def verify_distances(distances):
         if not distance.isnumeric():
             raise ValueError('The distance "%s" is not numeric' % distance)
 
-def convert_split_to_seconds(split):
-    logging.debug('Converting split %s into seconds.' % split)
-    minutes = int(split.split(':')[0])
-    seconds = float(split.split(':')[1])
-    logging.debug('The split "%s" is %.1f seconds' % (split, (minutes * 60 + seconds)))
-    return minutes * 60 + seconds
 
-def convert_seconds_to_split(seconds_total):
-    logging.debug('Converting %0.1f seconds to a minutes:seconds string' % seconds_total)
-    minutes, seconds = divmod(seconds_total, 60)
-    split = '%d:%04.1f' % (int(minutes), float(seconds))
-    logging.debug('%0.1f seconds is formatted to %s' % (seconds_total, split))
-    return split
-
-def convert_split_to_watts(split_seconds):
-    pace = split_seconds / SPLIT_DISTANCE
-    logging.debug('A split of %0.1f seconds corresponds to a pace of %0.4fs/m' % (split_seconds, pace))
-
-    watts = 2.8 / pace ** 3
-    logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (split_seconds, watts))
-
-    return '%0.1f' % watts
 
 def get_header(distances):
     # split column
