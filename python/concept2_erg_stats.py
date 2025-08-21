@@ -56,7 +56,7 @@ def parse_args():
     parser.add_argument(
         '-d', '--distances',
         metavar='DISTANCES',
-        help='Coma-separated list of distances, e.g. "1000,2000,10000" [' + default_distances() + ']',
+        help='Coma-separated list of integral distances, e.g. "1000,2000,10000" [' + default_distances() + ']',
         action='store',
         default=default_distances()
     )
@@ -92,7 +92,7 @@ def verify_increment(increment):
 def verify_distances(distances):
     compiled_pattern = re.compile('^(\\w+)(,\\s*\\w+)*$')
     if not re.match(compiled_pattern, distances):
-        raise ValueError('The distances string "%s" is not a valid comma-separated string' % distances)
+        raise ValueError('The distances string "%s" is not a valid comma-separated string of integers' % distances)
 
     for distance in distances.split(','):
         if not distance.isnumeric():
@@ -109,14 +109,21 @@ def convert_seconds_to_split(seconds):
     minutes, seconds = divmod(seconds, 60)
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
-def get_header():
-    header_row = 'Split'.center(COLUMN_WIDTH) + '2K'.center(COLUMN_WIDTH) + '5K'.center(COLUMN_WIDTH)
-    return '%s\n%s' % (header_row, '-' * len(header_row))
+def get_header(distances):
+    fmt_template = '%s'  # for the split_string
+    header_cols = ['Split'.center(COLUMN_WIDTH)]
+    for distance in distances:
+        fmt_template += '%s'
+        header = '%sm' % distance
+        header_cols.append(header.center(COLUMN_WIDTH))
 
-def get_row(split_string, split_seconds):
+    return fmt_template % tuple(header_cols)
+
+# order distances / type
+def get_row(split_string, split_seconds, distances):
     fmt_template = '%s'  # for the split_string
     time_strings = [split_string.center(COLUMN_WIDTH)]
-    for distance in [2000, 5000]:
+    for distance in distances:
         time_seconds = split_seconds * (distance / 500)
         time_string = convert_seconds_to_split(time_seconds)
         time_strings.append(time_string.center(COLUMN_WIDTH))
@@ -125,7 +132,7 @@ def get_row(split_string, split_seconds):
     fmt_values = tuple(time_strings)
     return fmt_template % fmt_values
 
-def tabulate_times(high_split, low_split, increment, ):
+def tabulate_times(high_split, low_split, increment, distances):
     logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
     start = convert_split_to_seconds(high_split)
     end = convert_split_to_seconds(low_split)
@@ -133,15 +140,15 @@ def tabulate_times(high_split, low_split, increment, ):
     if start <= end:
         raise ValueError('The "high" split must be greater than the "low" split')
 
-    output = [get_header()]
+    tabulation = [get_header(distances)]
     split_seconds = start
     while split_seconds >= end:
         split_string = convert_seconds_to_split(split_seconds)
         logging.debug('Calculating stats for %.1f seconds / %s split' % (split_seconds, split_string))
-        output.append(get_row(split_string, split_seconds))
+        tabulation.append(get_row(split_string, split_seconds, distances))
         split_seconds -= increment
 
-    return '\n'.join(output)
+    return '\n'.join(tabulation)
 
 if __name__ == '__main__':
     args = parse_args()
@@ -152,7 +159,8 @@ if __name__ == '__main__':
     verify_increment(args.split_increment)
     verify_distances(args.distances)
 
-    # convert distances to list and pass in *args
+    dists_str = args.distances.split(',')
+    dists_int = [int(d) for d in dists_str]
 
-    output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1))
+    output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1), sorted(dists_int))
     print(output)
