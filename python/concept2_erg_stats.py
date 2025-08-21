@@ -107,9 +107,12 @@ def convert_split_to_seconds(split):
     logging.debug('The split "%s" is %.1f seconds' % (split, (minutes * 60 + seconds)))
     return minutes * 60 + seconds
 
-def convert_seconds_to_split(seconds):
-    minutes, seconds = divmod(seconds, 60)
-    return '%d:%04.1f' % (int(minutes), float(seconds))
+def convert_seconds_to_split(seconds_total):
+    logging.debug('Converting %0.1f seconds to a minutes:seconds string' % seconds_total)
+    minutes, seconds = divmod(seconds_total, 60)
+    split = '%d:%04.1f' % (int(minutes), float(seconds))
+    logging.debug('%0.1f seconds is formatted to %s' % (seconds_total, split))
+    return split
 
 def convert_split_to_watts(split_seconds):
     pace = split_seconds / SPLIT_DISTANCE
