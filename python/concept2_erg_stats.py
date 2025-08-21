@@ -110,14 +110,19 @@ def convert_seconds_to_split(seconds):
     minutes, seconds = divmod(seconds, 60)
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
-def convert_split_to_watts(split):
-    return 'FOO'
+def convert_split_to_watts(split_seconds):
+    pace = split_seconds / 500.0
+    logging.debug('A split of %0.1f seconds corresponds to a pace of %0.4fs/m' % (split_seconds, pace))
+
+    watts = 2.8 / (pace ** 3)
+    logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (split_seconds, watts))
+
+    return '%0.1f' % watts
 
 def get_header(distances):
     # split column
     fmt_template = '%s'
     header_cols = ['Split'.center(COLUMN_WIDTH)]
-
 
     # distance column(s)
     for distance in distances:
@@ -145,9 +150,9 @@ def get_row(split_string, split_seconds, distances):
 
     # wattage column
     fmt_template += '%s'
-    watts_string = convert_split_to_watts(split_string)
+    watts = str(convert_split_to_watts(split_seconds)).center(COLUMN_WIDTH)
 
-    fmt_values = tuple(time_strings + [watts_string.center(COLUMN_WIDTH)])
+    fmt_values = tuple(time_strings + [watts])
     return fmt_template % fmt_values
 
 def tabulate_times(high_split, low_split, increment, distances):
