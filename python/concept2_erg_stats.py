@@ -115,7 +115,7 @@ def convert_split_to_watts(split_seconds):
     pace = split_seconds / SPLIT_DISTANCE
     logging.debug('A split of %0.1f seconds corresponds to a pace of %0.4fs/m' % (split_seconds, pace))
 
-    watts = 2.8 / (pace ** 3)
+    watts = 2.8 / pace ** 3
     logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (split_seconds, watts))
 
     return '%0.1f' % watts
