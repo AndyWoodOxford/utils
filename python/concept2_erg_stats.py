@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
 """
-Tabulates 2K and 5K times for a sequence of 500m split times.
+Tabulates 2K and 5K times for a sequence of 500m split times. The formula is
+Watts = 2.8/pace^3, where pace = split / 500m. (see https://www.concept2.co.uk/training/watts-calculator)
 """
 
 import argparse
@@ -109,19 +110,32 @@ def convert_seconds_to_split(seconds):
     minutes, seconds = divmod(seconds, 60)
     return '%d:%04.1f' % (int(minutes), float(seconds))
 
+def convert_split_to_watts(split):
+    return 'FOO'
+
 def get_header(distances):
-    fmt_template = '%s'  # for the split_string
+    # split column
+    fmt_template = '%s'
     header_cols = ['Split'.center(COLUMN_WIDTH)]
+
+
+    # distance column(s)
     for distance in distances:
         fmt_template += '%s'
         header = '%sm' % distance
         header_cols.append(header.center(COLUMN_WIDTH))
 
+    # wattage column
+    fmt_template += '%s'
+    header_cols.append('Watts'.center(COLUMN_WIDTH))
+
     return fmt_template % tuple(header_cols)
 
-# order distances / type
 def get_row(split_string, split_seconds, distances):
-    fmt_template = '%s'  # for the split_string
+    # split column
+    fmt_template = '%s'
+
+    # distance column(s)
     time_strings = [split_string.center(COLUMN_WIDTH)]
     for distance in distances:
         time_seconds = split_seconds * (distance / 500)
@@ -129,7 +143,11 @@ def get_row(split_string, split_seconds, distances):
         time_strings.append(time_string.center(COLUMN_WIDTH))
         fmt_template += '%s'
 
-    fmt_values = tuple(time_strings)
+    # wattage column
+    fmt_template += '%s'
+    watts_string = convert_split_to_watts(split_string)
+
+    fmt_values = tuple(time_strings + [watts_string.center(COLUMN_WIDTH)])
     return fmt_template % fmt_values
 
 def tabulate_times(high_split, low_split, increment, distances):
