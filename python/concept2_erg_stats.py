@@ -2,7 +2,7 @@
 
 """
 Tabulates 2K and 5K times for a sequence of 500m split times. The formula is
-Watts = 2.8/pace^3, where pace = split / 500m. (see https://www.concept2.co.uk/training/watts-calculator)
+Watts = 2.8/pace^3, where pace = split/500m. (see https://www.concept2.co.uk/training/watts-calculator)
 """
 
 import argparse
