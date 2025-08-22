@@ -1,14 +1,18 @@
 
 import logging
-import re
 
 class Concept2Split(object):
+    SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
+
     def __init__(self, split:float):
         self.split = split
         self.watts = self.calculate_watts()
 
     def __init__(self, split:str):
         self.__init__(self.split_string_to_seconds(split))
+
+    def __repr__(self):
+        return 'Split / %dm of %s (%d seconds) is %0.1f watts' % (self.SPLIT_DISTANCE, self.split, self.split_string_to_seconds(), self.watts)
 
     @staticmethod
     def split_seconds_to_string(split):
@@ -25,8 +29,10 @@ class Concept2Split(object):
         return minutes * 60 + seconds
 
     def calculate_watts(self):
-        pace =self.split / SPLIT_DISTANCE
+        pace =self.split / self.SPLIT_DISTANCE
         logging.debug('A split of %0.1f seconds corresponds to a pace of %0.4fs/m' % (self.split, pace))
 
-        self.watts = 2.8 / pace ** 3
-        logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (self.split, self.watts))
+        watts = 2.8 / pace ** 3
+        logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (self.split, watts))
+
+        return watts

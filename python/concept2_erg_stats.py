@@ -9,6 +9,8 @@ import argparse
 import logging
 import re
 
+import Concept2Split
+
 SPLIT_DISTANCE = 500
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
@@ -35,7 +37,6 @@ def parse_args():
     parser.add_argument(
         '-H', '--high-split',
         metavar='SPLIT',
-        nargs='?',
         help='High 500m split (i.e. slowest pace), enter as e.g. "2:15", "2:20.5" etc. [' + default_high_split() + ']',
         action='store',
         default=default_high_split()
