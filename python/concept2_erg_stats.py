@@ -90,20 +90,9 @@ def example_splits():
     split_display = Split.display('1:45.0')
     print('Split constructed from a display string: %s' % split_display)
 
-if __name__ == '__main__':
-
-    example_splits()
-
-    args = parse_args()
-    configure_logging(args)
-
-    verify_split(args.high_split, SPLIT_REGEX)
-    verify_split(args.low_split, SPLIT_REGEX)
-    verify_increment(args.split_increment)
-
+def tabulate(high_split, low_split, split_increment):
     table_output = [Split.get_header_row()]
 
-    # TODO refactor me
     start = Split.split_display_string_to_seconds(args.high_split)
     end = Split.split_display_string_to_seconds(args.low_split)
 
@@ -114,4 +103,17 @@ if __name__ == '__main__':
         table_output.append(split.get_row())
         seconds -= args.split_increment
 
-    print('\n'.join(table_output))
+    return '\n'.join(table_output)
+
+if __name__ == '__main__':
+    example_splits()
+
+    args = parse_args()
+    configure_logging(args)
+
+    verify_split(args.high_split, SPLIT_REGEX)
+    verify_split(args.low_split, SPLIT_REGEX)
+    verify_increment(args.split_increment)
+
+    output = tabulate(args.high_split, args.low_split, args.split_increment)
+    print(output)
