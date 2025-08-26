@@ -10,6 +10,7 @@ import logging
 
 class Split(object):
     SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
+    COLUMN_WIDTH = 13     # display tabulation
 
     def __init__(self, split:float):
         self.split = split
@@ -42,6 +43,20 @@ class Split(object):
         logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (self.split, watts))
 
         return watts
+
+    @staticmethod
+    def get_header_row():
+        header_cols = []
+
+        # split column
+        fmt_template = '%s'
+        header_cols.append('Split'.center(Split.COLUMN_WIDTH))
+
+        # wattage column
+        fmt_template += '%s'
+        header_cols.append('Watts'.center(Split.COLUMN_WIDTH))
+
+        return fmt_template % tuple(header_cols)
 
     @staticmethod
     def _split_seconds_to_display_string(split):

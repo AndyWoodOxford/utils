@@ -16,7 +16,6 @@ DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
 SPLIT_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$'
 
-COLUMN_WIDTH = 13
 
 def default_high_split():
     return DEFAULT_HIGH_SPLIT
@@ -80,23 +79,6 @@ def verify_increment(increment):
     if increment < 0.1:
         raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
 
-def get_header(distances):
-    # split column
-    fmt_template = '%s'
-    header_cols = ['Split'.center(COLUMN_WIDTH)]
-
-    # distance column(s)
-    for distance in distances:
-        fmt_template += '%s'
-        header = '%sm' % distance
-        header_cols.append(header.center(COLUMN_WIDTH))
-
-    # wattage column
-    fmt_template += '%s'
-    header_cols.append('Watts'.center(COLUMN_WIDTH))
-
-    return fmt_template % tuple(header_cols)
-
 def get_row(split_string, split_seconds, distances):
     # split column
     fmt_template = '%s'
@@ -155,6 +137,8 @@ if __name__ == '__main__':
     verify_split(args.low_split, SPLIT_REGEX)
     verify_increment(args.split_increment)
 
+    table_output = [Split.get_header_row()]
+
     # TODO refactor me
     start = Split.split_display_string_to_seconds(args.high_split)
     end = Split.split_display_string_to_seconds(args.low_split)
@@ -165,5 +149,4 @@ if __name__ == '__main__':
         print(split)
         seconds -= args.split_increment
 
-    #output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1), sorted(dists_int))
-    #print(output)
+    print(table_output)
