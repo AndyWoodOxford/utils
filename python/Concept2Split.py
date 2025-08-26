@@ -44,6 +44,17 @@ class Split(object):
 
         return watts
 
+    def get_row(self):
+        # split column
+        fmt_template = '%s'
+        fmt_values = [self.split]
+
+        # wattage column
+        fmt_template += '%s'
+        fmt_values.append(self.watts)
+
+        return fmt_template % tuple(fmt_values)
+
     @staticmethod
     def get_header_row():
         header_cols = []

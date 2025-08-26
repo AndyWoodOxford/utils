@@ -79,42 +79,6 @@ def verify_increment(increment):
     if increment < 0.1:
         raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
 
-def get_row(split_string, split_seconds, distances):
-    # split column
-    fmt_template = '%s'
-
-    # distance column(s)
-    time_strings = [split_string.center(COLUMN_WIDTH)]
-    for distance in distances:
-        time_seconds = split_seconds * (distance / SPLIT_DISTANCE)
-        time_string = convert_seconds_to_split(time_seconds)
-        time_strings.append(time_string.center(COLUMN_WIDTH))
-        fmt_template += '%s'
-
-    # wattage column
-    fmt_template += '%s'
-    watts = str(convert_split_to_watts(split_seconds)).center(COLUMN_WIDTH)
-
-    fmt_values = tuple(time_strings + [watts])
-    return fmt_template % fmt_values
-
-def tabulate_times(high_split, low_split, increment, distances):
-    logging.debug('Tabulating times for splits between %s and %s in increments of %.1f second(s).' % (high_split, low_split, increment))
-    start = convert_split_to_seconds(high_split)
-    end = convert_split_to_seconds(low_split)
-
-    if start <= end:
-        raise ValueError('The "high" split must be greater than the "low" split')
-
-    tabulation = [get_header(distances)]
-    split_seconds = start
-    while split_seconds >= end:
-        split_string = convert_seconds_to_split(split_seconds)
-        logging.debug('Calculating stats for %.1f seconds / %s split' % (split_seconds, split_string))
-        tabulation.append(get_row(split_string, split_seconds, distances))
-        split_seconds -= increment
-
-    return '\n'.join(tabulation)
 
 # Constructor overloading using class methods
 def example_splits():
@@ -146,7 +110,8 @@ if __name__ == '__main__':
     seconds = start
     while seconds >= end:
         split = Split(seconds)
-        print(split)
+        logging.debug(split)
+        table_output.append(split.get_row())
         seconds -= args.split_increment
 
-    print(table_output)
+    print('\n'.join(table_output))
