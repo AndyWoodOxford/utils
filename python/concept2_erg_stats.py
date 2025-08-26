@@ -14,13 +14,9 @@ from Concept2Split import Split
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
-DEFAULT_DISTANCES = '2000,5000'
 SPLIT_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$'
 
 COLUMN_WIDTH = 13
-
-def default_distances():
-    return DEFAULT_DISTANCES
 
 def default_high_split():
     return DEFAULT_HIGH_SPLIT
@@ -56,13 +52,6 @@ def parse_args():
         default=default_low_split()
     )
     parser.add_argument(
-        '-d', '--distances',
-        metavar='DISTANCES',
-        help='Coma-separated list of integral distances, e.g. "1000,2000,10000" [' + default_distances() + ']',
-        action='store',
-        default=default_distances()
-    )
-    parser.add_argument(
         '-q', '--quiet',
         help='Quiet mode',
         action='store_true')
@@ -90,17 +79,6 @@ def verify_split(split, pattern):
 def verify_increment(increment):
     if increment < 0.1:
         raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
-
-def verify_distances(distances):
-    compiled_pattern = re.compile('^(\\w+)(,\\s*\\w+)*$')
-    if not re.match(compiled_pattern, distances):
-        raise ValueError('The distances string "%s" is not a valid comma-separated string of integers' % distances)
-
-    for distance in distances.split(','):
-        if not distance.isnumeric():
-            raise ValueError('The distance "%s" is not numeric' % distance)
-
-
 
 def get_header(distances):
     # split column
@@ -176,10 +154,6 @@ if __name__ == '__main__':
     verify_split(args.high_split, SPLIT_REGEX)
     verify_split(args.low_split, SPLIT_REGEX)
     verify_increment(args.split_increment)
-    verify_distances(args.distances)
-
-    dists_str = args.distances.split(',')
-    dists_int = [int(d) for d in dists_str]
 
     # TODO refactor me
     start = Split.split_display_string_to_seconds(args.high_split)
