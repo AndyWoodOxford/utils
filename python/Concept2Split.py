@@ -12,6 +12,14 @@ class Concept2Split(object):
     #def __init__(self, split:str):
     #    self.__init__(self.split_string_to_seconds(split))
 
+    @classmethod
+    def seconds(cls, seconds:float):
+        return cls(seconds)
+
+    @classmethod
+    def display(cls, split:str):
+        return cls(cls.split_string_to_seconds(split))
+
     def __repr__(self):
         return 'A %dm split of %s (%d seconds) requires a power output of %0.1f watts' % (self.SPLIT_DISTANCE, self.split_display, self.split, self.watts)
 

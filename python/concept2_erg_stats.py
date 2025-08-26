@@ -157,7 +157,20 @@ def tabulate_times(high_split, low_split, increment, distances):
 
     return '\n'.join(tabulation)
 
+# Constructor overloading using class methods
+def example_splits():
+    # Create a split with a (floating point) value in seconds
+    split_seconds = Concept2Split.seconds(120.0)
+    print('Split constructed from a value in seconds: %s' % split_seconds)
+
+    # Create a split with a Concept2 ergometer display string
+    split_display = Concept2Split.display('1:45.0')
+    print('Split constructed from a display string: %s' % split_display)
+
 if __name__ == '__main__':
+
+    example_splits()
+
     args = parse_args()
     configure_logging(args)
 
@@ -173,12 +186,11 @@ if __name__ == '__main__':
     start = Concept2Split.split_string_to_seconds(args.high_split)
     end = Concept2Split.split_string_to_seconds(args.low_split)
 
-    split_seconds = start
-    while split_seconds >= end:
-        split = Concept2Split(split_seconds)
+    seconds = start
+    while seconds >= end:
+        split = Concept2Split(seconds)
         print(split)
-        split_seconds -= args.split_increment
-
+        seconds -= args.split_increment
 
     #output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1), sorted(dists_int))
     #print(output)
