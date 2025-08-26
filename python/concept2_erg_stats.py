@@ -16,7 +16,7 @@ DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
 DEFAULT_DISTANCES = '2000,5000'
-SPLIT_REGEX = '^(\\d){1}:(\\d){1,2}(\\.)?(\\d)?$'
+SPLIT_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$'
 
 COLUMN_WIDTH = 13
 
@@ -183,8 +183,8 @@ if __name__ == '__main__':
     dists_int = [int(d) for d in dists_str]
 
     # TODO refactor me
-    start = Concept2Split.split_string_to_seconds(args.high_split)
-    end = Concept2Split.split_string_to_seconds(args.low_split)
+    start = Concept2Split.split_display_string_to_seconds(args.high_split)
+    end = Concept2Split.split_display_string_to_seconds(args.low_split)
 
     seconds = start
     while seconds >= end:
