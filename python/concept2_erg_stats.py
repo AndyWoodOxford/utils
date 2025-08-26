@@ -9,7 +9,7 @@ import argparse
 import logging
 import re
 
-import Concept2Split
+from Concept2Split import Concept2Split
 
 SPLIT_DISTANCE = 500
 DEFAULT_HIGH_SPLIT = "2:15"
@@ -169,5 +169,16 @@ if __name__ == '__main__':
     dists_str = args.distances.split(',')
     dists_int = [int(d) for d in dists_str]
 
-    output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1), sorted(dists_int))
-    print(output)
+    # TODO refactor me
+    start = Concept2Split.split_string_to_seconds(args.high_split)
+    end = Concept2Split.split_string_to_seconds(args.low_split)
+
+    split_seconds = start
+    while split_seconds >= end:
+        split = Concept2Split(split_seconds)
+        print(split)
+        split_seconds -= args.split_increment
+
+
+    #output = tabulate_times(args.high_split, args.low_split, round(args.split_increment, 1), sorted(dists_int))
+    #print(output)

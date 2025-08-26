@@ -6,20 +6,14 @@ class Concept2Split(object):
 
     def __init__(self, split:float):
         self.split = split
+        self.split_display = self._split_seconds_to_string(self.split)
         self.watts = self.calculate_watts()
 
-    def __init__(self, split:str):
-        self.__init__(self.split_string_to_seconds(split))
+    #def __init__(self, split:str):
+    #    self.__init__(self.split_string_to_seconds(split))
 
     def __repr__(self):
-        return 'Split / %dm of %s (%d seconds) is %0.1f watts' % (self.SPLIT_DISTANCE, self.split, self.split_string_to_seconds(), self.watts)
-
-    @staticmethod
-    def split_seconds_to_string(split):
-        minutes, seconds = divmod(split, 60)
-        split_string = '%d:%04.1f' % (int(minutes), float(seconds))
-        logging.debug('%0.1f seconds is formatted to %s' % (split, split_string))
-        return split_string
+        return 'A %dm split of %s (%d seconds) requires a power output of %0.1f watts' % (self.SPLIT_DISTANCE, self.split_display, self.split, self.watts)
 
     @staticmethod
     def split_string_to_seconds(split):
@@ -36,3 +30,10 @@ class Concept2Split(object):
         logging.debug('A split of %0.1f seconds corresponds to a wattage of %0.1fw' % (self.split, watts))
 
         return watts
+
+    @staticmethod
+    def _split_seconds_to_string(split):
+        minutes, seconds = divmod(split, 60)
+        split_string = '%d:%04.1f' % (int(minutes), float(seconds))
+        logging.debug('%0.1f seconds is formatted to %s' % (split, split_string))
+        return split_string
