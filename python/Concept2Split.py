@@ -8,7 +8,7 @@ Ref. https://www.concept2.co.uk/training/watts-calculator.
 
 import logging
 
-class Concept2Split(object):
+class Split(object):
     SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
 
     def __init__(self, split:float):

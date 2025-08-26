@@ -9,9 +9,8 @@ import argparse
 import logging
 import re
 
-from Concept2Split import Concept2Split
+from Concept2Split import Split
 
-SPLIT_DISTANCE = 500
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
@@ -160,11 +159,11 @@ def tabulate_times(high_split, low_split, increment, distances):
 # Constructor overloading using class methods
 def example_splits():
     # Create a split with a (floating point) value in seconds
-    split_seconds = Concept2Split.seconds(120.0)
+    split_seconds = Split.seconds(120.0)
     print('Split constructed from a value in seconds: %s' % split_seconds)
 
     # Create a split with a Concept2 ergometer display string
-    split_display = Concept2Split.display('1:45.0')
+    split_display = Split.display('1:45.0')
     print('Split constructed from a display string: %s' % split_display)
 
 if __name__ == '__main__':
@@ -183,12 +182,12 @@ if __name__ == '__main__':
     dists_int = [int(d) for d in dists_str]
 
     # TODO refactor me
-    start = Concept2Split.split_display_string_to_seconds(args.high_split)
-    end = Concept2Split.split_display_string_to_seconds(args.low_split)
+    start = Split.split_display_string_to_seconds(args.high_split)
+    end = Split.split_display_string_to_seconds(args.low_split)
 
     seconds = start
     while seconds >= end:
-        split = Concept2Split(seconds)
+        split = Split(seconds)
         print(split)
         seconds -= args.split_increment
 
