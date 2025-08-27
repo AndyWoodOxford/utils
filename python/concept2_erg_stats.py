@@ -16,7 +16,6 @@ DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
 SPLIT_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$'
 
-
 def default_high_split():
     return DEFAULT_HIGH_SPLIT
 
@@ -68,7 +67,7 @@ def configure_logging(args):
     elif args.verbose:
         log_level = logging.DEBUG
 
-    logging.basicConfig(level=log_level, format='%(levelname)s:%(message)s')
+    logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def verify_split(split, pattern):
     compiled_pattern = re.compile(pattern)
@@ -93,15 +92,15 @@ def example_splits():
 def tabulate(high_split, low_split, split_increment):
     table_output = [Split.get_header_row()]
 
-    start = Split.split_display_string_to_seconds(args.high_split)
-    end = Split.split_display_string_to_seconds(args.low_split)
+    start = Split.split_display_string_to_seconds(high_split)
+    end = Split.split_display_string_to_seconds(low_split)
 
     seconds = start
     while seconds >= end:
         split = Split(seconds)
         logging.debug(split)
         table_output.append(split.get_row())
-        seconds -= args.split_increment
+        seconds -= split_increment
 
     return '\n'.join(table_output)
 
