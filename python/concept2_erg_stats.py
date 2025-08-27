@@ -7,14 +7,12 @@ Watts = 2.8/pace^3, where pace = split/500m. (see https://www.concept2.co.uk/tra
 
 import argparse
 import logging
-import re
 
 from Concept2Split import Split
 
 DEFAULT_HIGH_SPLIT = "2:15"
 DEFAULT_LOW_SPLIT = "1:45"
 DEFAULT_SPLIT_INCREMENT = 1.0
-SPLIT_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$'
 
 def default_high_split():
     return DEFAULT_HIGH_SPLIT
@@ -69,15 +67,6 @@ def configure_logging(args):
 
     logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-def verify_split(split, pattern):
-    compiled_pattern = re.compile(pattern)
-    if not re.match(compiled_pattern, split):
-        raise ValueError('The string "%s" is not a valid format for a split' % split)
-
-def verify_increment(increment):
-    if increment < 0.1:
-        raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
-
 
 # Constructor overloading using class methods
 def example_splits():
@@ -89,30 +78,27 @@ def example_splits():
     split_display = Split.display('1:45.0')
     print('Split constructed from a display string: %s' % split_display)
 
-def tabulate(high_split, low_split, split_increment):
+if __name__ == '__main__':
+    example_splits()
+
+    args = parse_args()
+    Split.verify_increment(args.split_increment)
+    Split.verify_split(args.high_split)
+    Split.verify_split(args.low_split)
+
+    configure_logging(args)
+
     table_output = [Split.get_header_row()]
 
-    start = Split.split_display_string_to_seconds(high_split)
-    end = Split.split_display_string_to_seconds(low_split)
+    start = Split.split_display_string_to_seconds(args.high_split)
+    end = Split.split_display_string_to_seconds(args.low_split)
 
     seconds = start
     while seconds >= end:
         split = Split(seconds)
         logging.debug(split)
         table_output.append(split.get_row())
-        seconds -= split_increment
+        seconds -= args.split_increment
 
-    return '\n'.join(table_output)
+    print('\n'.join(table_output))
 
-if __name__ == '__main__':
-    example_splits()
-
-    args = parse_args()
-    configure_logging(args)
-
-    verify_split(args.high_split, SPLIT_REGEX)
-    verify_split(args.low_split, SPLIT_REGEX)
-    verify_increment(args.split_increment)
-
-    output = tabulate(args.high_split, args.low_split, args.split_increment)
-    print(output)

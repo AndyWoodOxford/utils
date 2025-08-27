@@ -3,6 +3,7 @@
 import pytest
 
 import concept2_erg_stats
+from Concept2Split import Split
 
 def test_invalid_split():
     split = ''

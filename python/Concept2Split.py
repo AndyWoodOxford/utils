@@ -6,9 +6,12 @@ a value in seconds (rounded to one decimal place).
 Ref. https://www.concept2.co.uk/training/watts-calculator.
 """
 
+import re
+
 class Split(object):
-    SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
     COLUMN_WIDTH = 13     # display tabulation
+    SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
+    SPLIT_DISPLAY_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$' # e.g. '1:45.1'
 
     def __init__(self, split:float):
         self.split = split
@@ -21,10 +24,22 @@ class Split(object):
 
     @classmethod
     def display(cls, display:str):
+        Split.verify_split(display)
         return cls(cls.split_display_string_to_seconds(display))
 
     def __repr__(self):
         return 'A %dm split of %s (%d seconds) requires a power output of %0.1f watts' % (self.SPLIT_DISTANCE, self.split_display, self.split, self.watts)
+
+    @staticmethod
+    def verify_split(split):
+        compiled_pattern = re.compile(Split.SPLIT_DISPLAY_REGEX)
+        if not re.match(compiled_pattern, split):
+            raise ValueError('The string "%s" is not a valid format for a split' % split)
+
+    @staticmethod
+    def verify_increment(increment):
+        if increment < 0.1:
+            raise ValueError('The increment must be at least 0.1; %s is invalid' % str(increment))
 
     @staticmethod
     def split_display_string_to_seconds(split):
