@@ -37,16 +37,16 @@ class Split(object):
 
         watts = 2.8 / pace ** 3
 
-        return watts
+        return round(watts, 1)
 
     def get_row(self):
         # split column
         fmt_template = '%s'
-        fmt_values = [self.split]
+        fmt_values = [self.split_display.center(Split.COLUMN_WIDTH)]
 
         # wattage column
         fmt_template += '%s'
-        fmt_values.append(self.watts)
+        fmt_values.append(str(self.watts).center(Split.COLUMN_WIDTH))
 
         return fmt_template % tuple(fmt_values)
 
