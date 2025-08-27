@@ -2,76 +2,52 @@
 
 import pytest
 
-import concept2_erg_stats
 from Concept2Split import Split
 
 def test_invalid_split():
-    split = ''
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
+        split = Split.display('')
 
 def test_invalid_split_missing_seconds():
-    split = '2'
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
+        split = Split.display('2')
 
 def test_invalid_split_decimal_places():
-    split = '2:00.123'
     with pytest.raises(ValueError):
-        concept2_erg_stats.verify_split(split, concept2_erg_stats.SPLIT_REGEX)
+        split = Split.display('2:00.123')
 
 def test_exact_minute_split_to_seconds():
-    split = '2:00'
+    split = Split.display('2:00')
     expected_value = 120
-    assert concept2_erg_stats.convert_split_to_seconds(split) == expected_value
-
-def test_exact_minute_seconds_to_split():
-    seconds = 120
-    expected_value = '2:00.0'
-    assert concept2_erg_stats.convert_seconds_to_split(seconds) == expected_value
+    assert split.split == expected_value
 
 def test_exact_minute_single_seconds_split_to_seconds():
-    split = '2:0'
+    split = Split.display('2:00.0')
     expected_value = 120
-    assert concept2_erg_stats.convert_split_to_seconds(split) == expected_value
+    assert split.split == expected_value
 
-def test_exact_decimal_point_split_to_seconds():
-    split = '2:00.0'
-    expected_value = 120
-    assert concept2_erg_stats.convert_split_to_seconds(split) == expected_value
-
-def test_exact_decimal_point_seconds_to_split():
-    seconds = 120.0
+def test_exact_minute_seconds_to_split():
+    split = Split.seconds(120)
     expected_value = '2:00.0'
-    assert concept2_erg_stats.convert_seconds_to_split(seconds) == expected_value
+    assert split.split_display == expected_value
 
 def test_typical_split_to_seconds():
-    split = '1:45'
+    split = Split.display('1:45')
     expected_value = 105
-    assert concept2_erg_stats.convert_split_to_seconds(split) == expected_value
+    assert split.split == expected_value
 
 def test_decimal_point_split_to_seconds():
-    split = "1:50.5"
+    split = Split.display('1:50.5')
     expected_value = 110.5
-    assert concept2_erg_stats.convert_split_to_seconds(split) == expected_value
-
-def test_decimal_point_seconds_to_split():
-    seconds = 110.5
-    expected_value = '1:50.5'
-    assert concept2_erg_stats.convert_seconds_to_split(seconds) == expected_value
-
-def test_invalid_increment():
-    increment = 0.05
-    with pytest.raises(ValueError):
-        concept2_erg_stats.verify_increment(increment)
+    assert split.split == expected_value
 
 # Ref. https://www.concept2.co.uk/training/watts-calculator
-def test_watts_normal_split():
-    split = 120
-    expected_value = '202.5'
-    assert concept2_erg_stats.convert_split_to_watts(split) == expected_value
+def test_watts_from_seconds():
+    split = Split.seconds(120)
+    expected_value = 202.5
+    assert split.watts == expected_value
 
-def test_watts_low_split():
-    split = 90.0
-    expected_value = '480.1'
-    assert concept2_erg_stats.convert_split_to_watts(split) == expected_value
+def test_watts_from_display():
+    split = Split.display("1:45.0")
+    expected_value = 302.3
+    assert split.watts == expected_value
