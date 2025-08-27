@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 """
-Tabulates 2K and 5K times for a sequence of 500m split times. The formula is
-Watts = 2.8/pace^3, where pace = split/500m. (see https://www.concept2.co.uk/training/watts-calculator)
+Tabulates the wattage required for a range of 500m split times. The formula is
+Watts = 2.8/pace^3, where pace = split/500m. (see https://www.concept2.co.uk/training/watts-calculator).
+Optionally shows the total times for a range of distances.
 """
 
 import argparse
@@ -55,6 +56,13 @@ def parse_args():
         '-v', '--verbose',
         help='Verbose mode',
         action='store_true')
+    parser.add_argument(
+        'bar',
+        metavar='DISTANCE',
+        help='Calculate time for this distance',
+        nargs='+',
+    )
+
     return parser.parse_args()
 
 
@@ -101,4 +109,6 @@ if __name__ == '__main__':
         seconds -= args.split_increment
 
     print('\n'.join(table_output))
+
+    print(args.bar)
 
