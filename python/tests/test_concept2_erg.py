@@ -41,6 +41,16 @@ def test_decimal_point_split_to_seconds():
     expected_value = 110.5
     assert split.split == expected_value
 
+def test_invalid_distance():
+    distances = [500, -1]
+    with pytest.raises(ValueError):
+        split = Split.display('2:00', distances)
+
+def test_non_integer_distance():
+    distances = [1000, 'foo']
+    with pytest.raises(ValueError):
+        split = Split.display('2:00', distances)
+
 # Ref. https://www.concept2.co.uk/training/watts-calculator
 def test_watts_from_seconds():
     split = Split.seconds(120)

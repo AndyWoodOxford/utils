@@ -57,10 +57,11 @@ def parse_args():
         help='Verbose mode',
         action='store_true')
     parser.add_argument(
-        'bar',
+        'distances',
         metavar='DISTANCE',
-        help='Calculate time for this distance',
-        nargs='+',
+        help='Calculate times for these distances',
+        default=[],
+        nargs='*',
     )
 
     return parser.parse_args()
@@ -87,28 +88,27 @@ def example_splits():
     print('Split constructed from a display string: %s' % split_display)
 
 if __name__ == '__main__':
-    example_splits()
-
     args = parse_args()
+
     Split.verify_increment(args.split_increment)
     Split.verify_split(args.high_split)
     Split.verify_split(args.low_split)
 
     configure_logging(args)
 
-    table_output = [Split.get_header_row()]
+    example_splits()
+
+    table_output = [Split.get_header_row(args.distances)]
 
     start = Split.split_display_string_to_seconds(args.high_split)
     end = Split.split_display_string_to_seconds(args.low_split)
 
     seconds = start
     while seconds >= end:
-        split = Split(seconds)
+        split = Split(seconds, args.distances)
         logging.debug(split)
         table_output.append(split.get_row())
         seconds -= args.split_increment
 
     print('\n'.join(table_output))
-
-    print(args.bar)
 

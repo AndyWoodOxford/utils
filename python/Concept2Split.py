@@ -13,19 +13,25 @@ class Split(object):
     SPLIT_DISTANCE = 500  # meters i.e. the split is time per 500m
     SPLIT_DISPLAY_REGEX = '^(\\d)+:(\\d){1,2}(\\.)?(\\d)?$' # e.g. '1:45.1'
 
-    def __init__(self, split:float):
+    def __init__(self, split:float, distances):
         self.split = split
-        self.split_display = self._split_seconds_to_display_string(self.split)
+        self.split_display = self._seconds_to_display_string(self.split)
         self.watts = self.calculate_watts()
 
-    @classmethod
-    def seconds(cls, seconds:float):
-        return cls(seconds)
+        #Split.verify_distances(distances)
+        if distances:
+            self.distances = list(map(int, distances))
+        else:
+            self.distances = []
 
     @classmethod
-    def display(cls, display:str):
+    def seconds(cls, seconds:float, distances = None):
+        return cls(seconds, distances)
+
+    @classmethod
+    def display(cls, display:str, distances = None):
         Split.verify_split(display)
-        return cls(cls.split_display_string_to_seconds(display))
+        return cls(cls.split_display_string_to_seconds(display), distances)
 
     def __repr__(self):
         return 'A %dm split of %s (%d seconds) requires a power output of %0.1f watts' % (self.SPLIT_DISTANCE, self.split_display, self.split, self.watts)
@@ -63,10 +69,18 @@ class Split(object):
         fmt_template += '%s'
         fmt_values.append(str(self.watts).center(Split.COLUMN_WIDTH))
 
+        # distance column(s)
+        times = []
+        for d in self.distances:
+            time_seconds = self.split * (d / Split.SPLIT_DISTANCE)
+            time_string = self._seconds_to_display_string(time_seconds)
+            times.append(time_string.center(Split.COLUMN_WIDTH))
+            fmt_template += '%s'
+
         return fmt_template % tuple(fmt_values)
 
     @staticmethod
-    def get_header_row():
+    def get_header_row(distances = None):
         header_cols = []
 
         # split column
@@ -77,10 +91,16 @@ class Split(object):
         fmt_template += '%s'
         header_cols.append('Watts'.center(Split.COLUMN_WIDTH))
 
+        # distance column(s)
+        for d in distances:
+            fmt_template += '%s'
+            col = '%sm' % d
+            header_cols.append(col.center(Split.COLUMN_WIDTH))
+
         return fmt_template % tuple(header_cols)
 
     @staticmethod
-    def _split_seconds_to_display_string(split):
+    def _seconds_to_display_string(split):
         minutes, seconds = divmod(split, 60)
         display_string = '%d:%04.1f' % (int(minutes), float(seconds))
         return display_string
