@@ -70,11 +70,10 @@ class Split(object):
         fmt_values.append(str(self.watts).center(Split.COLUMN_WIDTH))
 
         # distance column(s)
-        times = []
         for d in self.distances:
             time_seconds = self.split * (d / Split.SPLIT_DISTANCE)
             time_string = self._seconds_to_display_string(time_seconds)
-            times.append(time_string.center(Split.COLUMN_WIDTH))
+            fmt_values.append(time_string.center(Split.COLUMN_WIDTH))
             fmt_template += '%s'
 
         return fmt_template % tuple(fmt_values)
