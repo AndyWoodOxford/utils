@@ -1,9 +1,11 @@
 """
-Represents a Concept2 Ergometer 'split' - a fixed time in seconds to row 500m.
-The power in watts needed to achieve the split is calculated. A instance
-can be constructed from either a display string in the form 'MM:SS.n' or
-a value in seconds (rounded to one decimal place).
+Represents a Concept2 Ergometer 'split' - the time in minutes and seconds
+needed to row 500m. The power in watts needed to achieve the split is calculated.
+An instance can be constructed from either a display string in the form 'MM:SS.n'
+or a value in seconds (rounded to one decimal place).
 Ref. https://www.concept2.co.uk/training/watts-calculator.
+The class optionally accepts a list of total distances and calculates the total
+times when rowing at the split rate.
 """
 
 import re

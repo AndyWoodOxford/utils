@@ -3,7 +3,7 @@
 """
 Tabulates the wattage required for a range of 500m split times. The formula is
 Watts = 2.8/pace^3, where pace = split/500m. (see https://www.concept2.co.uk/training/watts-calculator).
-Optionally shows the total times for a range of distances.
+This script also shows the total times needed for an optional range of distances (in metres).
 """
 
 import argparse
