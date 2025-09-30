@@ -81,11 +81,11 @@ def configure_logging(args):
 def example_splits():
     # Create a split with a (floating point) value in seconds
     split_seconds = Split.seconds(120.0)
-    print('Split constructed from a value in seconds: %s' % split_seconds)
+    print('EXAMPLE: Split constructed from a value in seconds: %s' % split_seconds)
 
     # Create a split with a Concept2 ergometer display string
     split_display = Split.display('1:45.0')
-    print('Split constructed from a display string: %s' % split_display)
+    print('EXAMPLE: Split constructed from a display string: %s' % split_display)
 
 if __name__ == '__main__':
     args = parse_args()
