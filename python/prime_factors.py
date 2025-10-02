@@ -17,11 +17,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def configure_logging(args):
+def configure_logging(local_args):
     log_level = logging.INFO
-    if args.quiet:
+    if local_args.quiet:
         log_level = logging.WARNING
-    elif args.verbose:
+    elif local_args.verbose:
         log_level = logging.DEBUG
 
     logging.basicConfig(level=log_level, format='%(levelname)s: %(message)s')
@@ -35,9 +35,10 @@ def is_prime(number):
         factor += 1
     return True
 
+
 def prime_factors(number):
     logging.debug('Calculating prime factors for %d' % number)
-    factors = ()
+    factors_set = ()
     dividend = number
     divisor = 2
     while True:
@@ -47,7 +48,7 @@ def prime_factors(number):
             break
 
         # The number is a prime if there are no factors found and the divisor is past the square root
-        if not factors and pow(divisor, 2) > number:
+        if not factors_set and pow(divisor, 2) > number:
             logging.debug('No factors have been found and the divisor %d is larger than the square root of %d - quitting loop' % (divisor, number))
             break
 
@@ -58,7 +59,7 @@ def prime_factors(number):
             if dividend % divisor == 0:
                 # Divisor is a prime factor - capture and retry this value
                 logging.debug('  Divisor is a prime factor')
-                factors += (divisor,)
+                factors_set += (divisor,)
                 dividend = dividend // divisor
                 logging.debug('  Dividend is now %d' % dividend)
                 continue
@@ -66,7 +67,7 @@ def prime_factors(number):
         # Otherwise try the next integer
         divisor += 1
 
-    return factors
+    return factors_set
 
 
 if __name__ == '__main__':
@@ -81,12 +82,9 @@ if __name__ == '__main__':
         factors_indexed = { index: factor for index, factor in zip(index_list, factors) }
         count_distinct = len(set(factors_indexed.values()))
 
-        print('LEN %d' % len(factors))
-
         index = 0
         output = ''
         while index < len(factors):
-            print('IDX %d' % index)
             prime_factor = factors[index]
             # Unique prime factor - capture and increment to the following one
             if factors.count(prime_factor) == 1:
