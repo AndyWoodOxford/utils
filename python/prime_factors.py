@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
     factors = prime_factors(args.number)
     if not factors:
-        print('No prime factors found: %d is a prime number' % args.number)
+        print('No factors found: %d is a prime number' % args.number)
     else:
         index_list = (range(len(factors)))
         factors_indexed = { index: factor for index, factor in zip(index_list, factors) }
