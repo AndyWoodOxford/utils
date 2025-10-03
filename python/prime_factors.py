@@ -70,34 +70,38 @@ def prime_factors(number):
     return factors_set
 
 
+def output_string(factors):
+    index_list = (range(len(factors)))
+    factors_indexed = {index: factor for index, factor in zip(index_list, factors)}
+    count_distinct = len(set(factors_indexed.values()))
+
+    index = 0
+    output = ''
+    while index < len(factors):
+        prime_factor = factors[index]
+        # Unique prime factor - capture and increment to the following one
+        if factors.count(prime_factor) == 1:
+            output += '%d' % prime_factor
+            if index < len(factors) - 1:
+                output += ' * '
+            index += 1
+        # Repeated prime factor - construct exponent and shift the index by the count
+        else:
+            prime_factor_count = factors.count(prime_factor)
+            output += '%d^%d' % (prime_factor, prime_factor_count)
+            if index + prime_factor_count < len(factors):
+                output += ' * '
+            index += prime_factor_count
+
+    return output
+
+
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
 
-    factors = prime_factors(args.number)
-    if not factors:
+    prime_factors = prime_factors(args.number)
+    if not prime_factors:
         print('No factors found: %d is a prime number' % args.number)
     else:
-        index_list = (range(len(factors)))
-        factors_indexed = { index: factor for index, factor in zip(index_list, factors) }
-        count_distinct = len(set(factors_indexed.values()))
-
-        index = 0
-        output = ''
-        while index < len(factors):
-            prime_factor = factors[index]
-            # Unique prime factor - capture and increment to the following one
-            if factors.count(prime_factor) == 1:
-                output += '%d' % prime_factor
-                if index < len(factors) - 1:
-                    output += ' * '
-                index += 1
-            # Repeated prime factor - construct exponent and shift the index by the count
-            else:
-                prime_factor_count = factors.count(prime_factor)
-                output += '%d^%d' % (prime_factor, prime_factor_count)
-                if index + prime_factor_count < len(factors):
-                    output += ' * '
-                index += prime_factor_count
-
-        print('The prime factors of %d are: %s' % (args.number, output))
+        print('The prime factors of %d are: %s' % (args.number, output_string(prime_factors)))
