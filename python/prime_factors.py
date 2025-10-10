@@ -76,7 +76,6 @@ def prime_factors(number):
 def output_string(factors):
     index_list = (range(len(factors)))
     factors_indexed = {index: factor for index, factor in zip(index_list, factors)}
-    count_distinct = len(set(factors_indexed.values()))
 
     colorama.init(autoreset=True)
 
