@@ -95,7 +95,7 @@ def output_string(factors):
             prime_factor_count = factors.count(prime_factor)
             output += '%s%d%s' % (Fore.GREEN,  prime_factor, Style.RESET_ALL)
             output += '%s^%s' % (Style.BRIGHT, Style.RESET_ALL)
-            output += '%s%d%s' % (Fore.LIGHTGREEN_EX,  prime_factor_count, Style.RESET_ALL)
+            output += '%s%d%s' % (Fore.CYAN,  prime_factor_count, Style.RESET_ALL)
             if index + prime_factor_count < len(factors):
                 output += ' * '
             index += prime_factor_count
