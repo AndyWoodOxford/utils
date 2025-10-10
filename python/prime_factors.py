@@ -5,7 +5,10 @@ Outputs the prime factors of a positive integer.
 """
 
 import argparse
+import colorama
 import logging
+
+from colorama import Fore, Style
 
 
 
@@ -75,20 +78,24 @@ def output_string(factors):
     factors_indexed = {index: factor for index, factor in zip(index_list, factors)}
     count_distinct = len(set(factors_indexed.values()))
 
+    colorama.init(autoreset=True)
+
     index = 0
     output = ''
     while index < len(factors):
         prime_factor = factors[index]
         # Unique prime factor - capture and increment to the following one
         if factors.count(prime_factor) == 1:
-            output += '%d' % prime_factor
+            output += '%s%d%s' % (Fore.GREEN, prime_factor, Style.RESET_ALL)
             if index < len(factors) - 1:
                 output += ' * '
             index += 1
         # Repeated prime factor - construct exponent and shift the index by the count
         else:
             prime_factor_count = factors.count(prime_factor)
-            output += '%d^%d' % (prime_factor, prime_factor_count)
+            output += '%s%d%s' % (Fore.GREEN,  prime_factor, Style.RESET_ALL)
+            output += '%s^%s' % (Style.BRIGHT, Style.RESET_ALL)
+            output += '%s%d%s' % (Fore.LIGHTGREEN_EX,  prime_factor_count, Style.RESET_ALL)
             if index + prime_factor_count < len(factors):
                 output += ' * '
             index += prime_factor_count
