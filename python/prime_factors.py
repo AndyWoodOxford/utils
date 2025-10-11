@@ -32,7 +32,8 @@ def configure_logging(local_args):
 
 def is_prime(number):
     factor = 2
-    while factor < number:
+    # Commutativity - nudge up potential factors until the square root is reached
+    while factor < number and pow(factor, 2) <= number:
         if number % factor == 0:
             return False
         factor += 1
