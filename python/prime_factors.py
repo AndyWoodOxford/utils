@@ -75,13 +75,8 @@ def prime_factors(number):
 
 
 def output_string(factors):
-    index_list = (range(len(factors)))
-    # e.g. n=40; zip((0,1,2,3), (2,2,2,5)) => {0:2, 1:2, 2:2, 3:5}
-    factors_indexed = {index: factor for index, factor in zip(index_list, factors)}
-
     colorama.init(autoreset=True)
     output = ''
-
     index = 0
     while index < len(factors):
         prime_factor = factors[index]
