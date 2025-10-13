@@ -7,6 +7,7 @@ Outputs the prime factors of a positive integer.
 import argparse
 import colorama
 import logging
+import sys
 
 from colorama import Fore, Style
 
@@ -102,6 +103,10 @@ def output_string(factors):
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
+
+    if args.number < 2:
+        logging.error('The number must be greater or equal to 2: %d is invalid' % args.number)
+        sys.exit(1)
 
     prime_factors = prime_factors(args.number)
     if not prime_factors:
