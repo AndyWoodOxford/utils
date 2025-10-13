@@ -7,6 +7,7 @@ Outputs the prime factors of a positive integer.
 import argparse
 import colorama
 import logging
+import sys
 
 from colorama import Fore, Style
 
@@ -32,7 +33,7 @@ def configure_logging(local_args):
 
 def is_prime(number):
     factor = 2
-    # Commutativity - nudge up potential factors until the square root is reached
+    # Commutativity - keep incrementing potential factors until the square root is reached
     while factor < number and pow(factor, 2) <= number:
         if number % factor == 0:
             return False
@@ -46,17 +47,17 @@ def prime_factors(number):
     dividend = number
     divisor = 2
     while True:
-        # All integers are divisible by 1 so the factoring is now complete
+        # Exit condition 1 - all integers are divisible by 1 so the factoring is now complete
         if dividend == 1:
             logging.debug('Dividend is now 1 - prime factoring is complete')
             break
 
-        # The number is a prime if there are no factors found and the divisor is past the square root
+        # Exit condition 2 - the number is a prime if no factors have been found *and* the divisor exceeds its square root
         if not factors_set and pow(divisor, 2) > number:
             logging.debug('No factors have been found and the divisor %d is larger than the square root of %d - quitting loop' % (divisor, number))
             break
 
-        # If the divisor is prime and is a factor then capture and retry
+        # If the divisor is prime *and* is a factor then capture the divisor, apply against the dividend and retry
         logging.debug('Trying divisor %d' % divisor)
         if is_prime(divisor):
             logging.debug('  Divisor is a prime')
@@ -68,20 +69,16 @@ def prime_factors(number):
                 logging.debug('  Dividend is now %d' % dividend)
                 continue
 
-        # Otherwise try the next integer
+        # The current divisor is not a factor - increment and continue
         divisor += 1
 
     return factors_set
 
 
 def output_string(factors):
-    index_list = (range(len(factors)))
-    factors_indexed = {index: factor for index, factor in zip(index_list, factors)}
-
     colorama.init(autoreset=True)
-
-    index = 0
     output = ''
+    index = 0
     while index < len(factors):
         prime_factor = factors[index]
         # Unique prime factor - capture and increment to the following one
@@ -106,6 +103,10 @@ def output_string(factors):
 if __name__ == '__main__':
     args = parse_args()
     configure_logging(args)
+
+    if args.number < 2:
+        logging.error('The number must be greater or equal to 2: %d is invalid' % args.number)
+        sys.exit(1)
 
     prime_factors = prime_factors(args.number)
     if not prime_factors:
