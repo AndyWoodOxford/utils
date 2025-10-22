@@ -77,7 +77,7 @@ fn_list_instances() {
   IFS=$'\n' read -d '' -r -a name_tags < <("${AWS}"                    \
     ec2 describe-instances --region "${aws_region}"                    \
     --filters "Name=instance-state-name,Values=running"                \
-    --query "Reservations[*].Instances[*].Tags[?Key=='name'].Value"    \
+    --query "Reservations[*].Instances[*].Tags[?Key=='Name'].Value"    \
     --output text | sort)
   set -o errexit
 
