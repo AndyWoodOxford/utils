@@ -31,7 +31,7 @@ fn_usage() {
   echo -e  "\033[1;36m""Options${COLOUR_OFF}"
   fn_print_tabbed_message "-d          Dry run mode (no actual connection is made)"
   fn_print_tabbed_message "-h          Show this usage message and exit"
-  fn_print_tabbed_message "-l          List instances (\"Name\" tags) and exit"
+  fn_print_tabbed_message "-l          List instances (\"name\" tags) and exit"
   fn_print_tabbed_message "-q          Quiet mode"
   fn_print_tabbed_message "-r REGION   AWS region [${DEFAULT_AWS_REGION}]"
   fn_print_tabbed_message "-v          Verbose mode"
@@ -181,7 +181,7 @@ then
 else
   if [[ "${verbose_mode}" = true ]]
   then
-    echo -e "Getting the InstanceId for the instance(s) with the \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}\""
+    echo -e "Getting the InstanceId for the instance(s) with the \"name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}\""
   fi
 
   set +o errexit
@@ -191,7 +191,7 @@ else
       --region "${aws_region}"                          \
       --filters                                         \
           "Name=instance-state-name,Values=running"     \
-          "Name=tag:Name,Values=${instance}"            \
+          "Name=tag:name,Values=${instance}"            \
       --query "Reservations[*].Instances[*].InstanceId" \
       --output text)
   set -o errexit
@@ -200,7 +200,7 @@ else
 
   if [[ "${instance_count}" -eq 0 ]]
   then
-    fn_print_error "ERROR: Could not find an instance having the \"Name\" tag set to \"${instance}\""
+    fn_print_error "ERROR: Could not find an instance having the \"name\" tag set to \"${instance}\""
     exit 2
 
   elif [[ "${instance_count}" -eq 1 ]]
@@ -219,7 +219,7 @@ else
     fi
 
   else
-    echo -e "I have found ${BGREEN}${instance_count}${COLOUR_OFF} instances with a \"Name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}:"
+    echo -e "I have found ${BGREEN}${instance_count}${COLOUR_OFF} instances with a \"name\" tag set to \"${BGREEN}${instance}${COLOUR_OFF}:"
     echo
     instance_index=0
     for instance_id in "${instance_ids[@]}"
