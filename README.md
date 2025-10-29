@@ -27,7 +27,7 @@ A collection of common but simple mathematical algorithms that are helping me to
 
 ## Appendix
 Pretty git logging :-)
-Based on an alias in an article on Medium.com - author unknown.
+Based on an alias in an article on [Medium.com by Jacob Bennet](https://levelup.gitconnected.com/use-git-like-a-senior-engineer-ef6d741c898e).
 
 ```shell
 alias glog='git log --graph --format=format:'\''%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%an%C(reset)%C(bold yellow)%d%C(reset) %C(dim white)- %s%C(reset)'\'' --all'
